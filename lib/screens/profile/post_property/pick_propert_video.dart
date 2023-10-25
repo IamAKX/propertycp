@@ -3,13 +3,25 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:propertycp/screens/profile/post_property/post_property_screen.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:sn_progress_dialog/options/completed.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
+import '../../../models/property_media.dart';
+import '../../../models/property_model.dart';
+import '../../../services/api_service.dart';
+import '../../../services/snakbar_service.dart';
+import '../../../services/storage_service.dart';
+import '../../../utils/enum.dart';
+
 class PickPropertyVideos extends StatefulWidget {
-  const PickPropertyVideos({super.key});
+  const PickPropertyVideos({super.key, required this.model});
   static const String routePath = '/pickPropertyVideos';
+  final PropertyModel model;
 
   @override
   State<PickPropertyVideos> createState() => _PickPropertyVideosState();
@@ -17,24 +29,72 @@ class PickPropertyVideos extends StatefulWidget {
 
 class _PickPropertyVideosState extends State<PickPropertyVideos> {
   List<File> videoList = [];
-
+  late ApiProvider _api;
+  late StorageProvider _storageProvider;
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
+    _storageProvider = Provider.of<StorageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pick Property Videos'),
         actions: [
           TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-            },
-            child: Text(
-              'Done',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge
-                  ?.copyWith(color: Colors.white),
-            ),
+            onPressed: _storageProvider.status == StorageStatus.loading ||
+                    _api.status == ApiStatus.loading
+                ? null
+                : () async {
+                    if (videoList.isEmpty) {
+                      SnackBarService.instance
+                          .showSnackBarError('Add atleast 1 video');
+                      return;
+                    }
+                    ProgressDialog pd = ProgressDialog(context: context);
+                    pd.show(
+                      max: videoList.length,
+                      msg: 'Uploading videos...',
+                      progressType: ProgressType.valuable,
+                      closeWithDelay: 2,
+                      completed: Completed(completedMsg: 'Upload complete'),
+                      onStatusChanged: (status) {
+                        if (status == DialogStatus.closed) {
+                          _api.createProperty(widget.model).then((value) {
+                            if (value) {
+                              SnackBarService.instance
+                                  .showSnackBarSuccess('Property posted');
+                              Navigator.pushReplacementNamed(
+                                  context, PostProperty.routePath);
+                            } else {
+                              SnackBarService.instance
+                                  .showSnackBarError('Failed to post property');
+                            }
+                          });
+                        }
+                      },
+                    );
+                    for (var i = 0; i < videoList.length; i++) {
+                      String link = await _storageProvider.uploadPropertyImage(
+                          videoList.elementAt(i), MediaType.Video.name);
+                      widget.model.images?.add(PropertyMedia(
+                          mediaType: MediaType.Video.name, url: link));
+                      pd.update(value: i + 1);
+                    }
+                  },
+            child: _storageProvider.status == StorageStatus.loading ||
+                    _api.status == ApiStatus.loading
+                ? const SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: CircularProgressIndicator(),
+                  )
+                : Text(
+                    'Done',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge
+                        ?.copyWith(color: Colors.white),
+                  ),
           ),
         ],
       ),

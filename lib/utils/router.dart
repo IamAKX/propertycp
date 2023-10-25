@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:propertycp/models/property_model.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_images.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_video.dart';
 import 'package:propertycp/screens/profile/post_property/post_property_screen.dart';
@@ -25,13 +26,13 @@ class NavRoute {
       case PropertyListingScreen.routePath:
         return MaterialPageRoute(
           builder: (_) => PropertyListingScreen(
-            propertyTypeId: settings.arguments as int,
+            params: settings.arguments as List<String?>,
           ),
         );
       case PropertyDetailScreen.routePath:
         return MaterialPageRoute(
           builder: (_) => PropertyDetailScreen(
-            propertyId: settings.arguments as int,
+            property: settings.arguments as PropertyModel,
           ),
         );
       case CreateLead.routePath:
@@ -45,9 +46,15 @@ class NavRoute {
       case PostProperty.routePath:
         return MaterialPageRoute(builder: (_) => const PostProperty());
       case PickPropertyImages.routePath:
-        return MaterialPageRoute(builder: (_) => const PickPropertyImages());
+        return MaterialPageRoute(
+            builder: (_) => PickPropertyImages(
+                  model: settings.arguments as PropertyModel,
+                ));
       case PickPropertyVideos.routePath:
-        return MaterialPageRoute(builder: (_) => const PickPropertyVideos());
+        return MaterialPageRoute(
+            builder: (_) => PickPropertyVideos(
+                  model: settings.arguments as PropertyModel,
+                ));
       case UserListScreen.routePath:
         return MaterialPageRoute(builder: (_) => const UserListScreen());
       case UserDetail.routePath:

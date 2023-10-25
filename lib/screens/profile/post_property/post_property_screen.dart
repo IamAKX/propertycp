@@ -1,8 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:propertycp/models/property_model.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_images.dart';
+import 'package:propertycp/services/snakbar_service.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/theme.dart';
+import 'package:string_validator/string_validator.dart';
 
 import '../../../utils/constants.dart';
 import '../../../widgets/gaps.dart';
@@ -26,6 +29,8 @@ class _PostPropertyState extends State<PostProperty> {
   String? selectedAreaType;
   String? selectedCity;
 
+  PropertyModel model = PropertyModel();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +39,25 @@ class _PostPropertyState extends State<PostProperty> {
         actions: [
           TextButton(
             onPressed: () {
+              if (!isValidInput()) {
+                return;
+              }
+              model.title = _titleCtrl.text;
+              model.subTitle = _subTitleCtrl.text;
+              model.price = double.tryParse(_priceCtrl.text);
+              model.bhk = _bhkCtrl.text;
+              model.area = double.tryParse(_areaCtrl.text);
+              model.areaUnit = selectedAreaType;
+              model.city = selectedCity;
+              model.type = selectedPropertyType == 'Commercial Properties'
+                  ? 'CommercialProperties'
+                  : selectedPropertyType;
+              model.description = _descriptionCtrl.text;
+              model.images = [];
+
               Navigator.pushReplacementNamed(
-                  context, PickPropertyImages.routePath);
+                  context, PickPropertyImages.routePath,
+                  arguments: model);
             },
             child: Text(
               'Next',
@@ -75,7 +97,7 @@ class _PostPropertyState extends State<PostProperty> {
         verticalGap(defaultPadding / 2),
         TextField(
           controller: _priceCtrl,
-          keyboardType: TextInputType.name,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           decoration: const InputDecoration(
             hintText: 'Price : Eg. 1.2 Cr or 85 lacs',
             label: Text('Price'),
@@ -98,7 +120,8 @@ class _PostPropertyState extends State<PostProperty> {
               flex: 4,
               child: TextField(
                 controller: _areaCtrl,
-                keyboardType: TextInputType.number,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 decoration: const InputDecoration(
                   hintText: 'Area : Eg. 1 or 1490.5',
                   label: Text('Area'),
@@ -120,8 +143,8 @@ class _PostPropertyState extends State<PostProperty> {
                       color: Theme.of(context).hintColor,
                     ),
                   ),
-                  items: ['Sq. ft.', 'Sq. yard', 'Gunta', 'Acre']
-                      .map((String value) {
+                  items:
+                      ['Sqft', 'Sqyard', 'Gunta', 'Acre'].map((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
                       child: Text(value),
@@ -183,7 +206,7 @@ class _PostPropertyState extends State<PostProperty> {
               color: Theme.of(context).hintColor,
             ),
           ),
-          items: propertyTypeName.values.map((String value) {
+          items: propertyTypeName.map((String value) {
             return DropdownMenuItem<String>(
               value: value,
               child: Text(value),
@@ -199,6 +222,7 @@ class _PostPropertyState extends State<PostProperty> {
         TextField(
           controller: _descriptionCtrl,
           maxLines: 3,
+          maxLength: 500,
           keyboardType: TextInputType.name,
           decoration: const InputDecoration(
             alignLabelWithHint: true,
@@ -209,5 +233,29 @@ class _PostPropertyState extends State<PostProperty> {
         verticalGap(defaultPadding),
       ],
     );
+  }
+
+  isValidInput() {
+    if (_titleCtrl.text.isEmpty ||
+        _subTitleCtrl.text.isEmpty ||
+        _priceCtrl.text.isEmpty ||
+        _bhkCtrl.text.isEmpty ||
+        _areaCtrl.text.isEmpty ||
+        _descriptionCtrl.text.isEmpty ||
+        (selectedPropertyType?.isEmpty ?? true) ||
+        (selectedAreaType?.isEmpty ?? true) ||
+        (selectedCity?.isEmpty ?? true)) {
+      SnackBarService.instance.showSnackBarError('All Fields are mandatory');
+      return false;
+    }
+    if (!isFloat(_priceCtrl.text)) {
+      SnackBarService.instance.showSnackBarError('Price should be numeric');
+      return false;
+    }
+    if (!isFloat(_areaCtrl.text)) {
+      SnackBarService.instance.showSnackBarError('Area should be numeric');
+      return false;
+    }
+    return true;
   }
 }

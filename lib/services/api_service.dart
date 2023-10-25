@@ -7,6 +7,8 @@ import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/leads_model.dart';
 import 'package:propertycp/models/list/lead_list.dart';
+import 'package:propertycp/models/list/property_list.dart';
+import 'package:propertycp/models/property_model.dart';
 
 import '../main.dart';
 import '../models/list/user_list.dart';
@@ -331,5 +333,84 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.failed;
     notifyListeners();
     return false;
+  }
+
+  Future<bool> createProperty(PropertyModel property) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Map<String, dynamic> reqBody = property.toMap();
+      reqBody.remove('id');
+      reqBody.remove('createdDate');
+      reqBody.remove('updatedDate');
+      log(json.encode(reqBody));
+      Response response = await _dio.post(
+        Api.properties,
+        data: json.encode(reqBody),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      debugPrint(response.toString());
+      if (response.statusCode == 201) {
+        status = ApiStatus.failed;
+        notifyListeners();
+        // SnackBarService.instance.showSnackBarSuccess('Lead created');
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      SnackBarService.instance
+          .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
+  }
+
+  Future<PropertyListModel?> getAllProperties(
+      String city, String propertyType) async {
+    status = ApiStatus.loading;
+    PropertyListModel? propertyListModel;
+    notifyListeners();
+
+    try {
+      Response response = await _dio.get(
+        '${Api.properties}city/?city=$city&propertyType=$propertyType',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        propertyListModel = PropertyListModel.fromMap(response.data);
+
+        status = ApiStatus.success;
+        notifyListeners();
+        return propertyListModel;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return propertyListModel;
   }
 }

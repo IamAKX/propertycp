@@ -1,16 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/constants.dart';
 import 'package:propertycp/utils/dummy.dart';
+import 'package:propertycp/utils/enum.dart';
 import 'package:propertycp/utils/theme.dart';
 import 'package:propertycp/widgets/gaps.dart';
 
+import '../../main.dart';
+import '../../models/property_model.dart';
+import '../../utils/preference_key.dart';
 import '../leads/create_lead.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
-  const PropertyDetailScreen({super.key, required this.propertyId});
-  final int propertyId;
+  const PropertyDetailScreen({super.key, required this.property});
+  final PropertyModel? property;
   static const String routePath = '/propertyDeatilScreen';
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
@@ -24,8 +29,30 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         title: const Text('Details'),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.favorite_border_outlined),
+            onPressed: () {
+              if (prefs
+                      .getStringList(SharedpreferenceKey.favourite)
+                      ?.contains(widget.property?.id?.toString()) ??
+                  false) {
+                SharedpreferenceKey.removeFromFavourite(
+                    widget.property?.id?.toString() ?? '');
+              } else {
+                SharedpreferenceKey.addToFavourite(
+                    widget.property?.id?.toString() ?? '');
+              }
+              setState(() {});
+            },
+            icon: (prefs
+                        .getStringList(SharedpreferenceKey.favourite)
+                        ?.contains(widget.property?.id?.toString()) ??
+                    false)
+                ? const Icon(
+                    Icons.favorite,
+                    color: Colors.red,
+                  )
+                : const Icon(
+                    Icons.favorite_border_outlined,
+                  ),
           ),
         ],
       ),
@@ -76,10 +103,18 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     ),
                     verticalGap(defaultPadding / 2),
                     rowWithTwoItem(
-                        context, 'Type', 'Flat', 'Area', '1500 Sqft'),
+                        context,
+                        'Type',
+                        '${widget.property?.type}',
+                        'Area',
+                        '${widget.property?.area} ${widget.property?.areaUnit}'),
                     verticalGap(defaultPadding / 2),
                     rowWithTwoItem(
-                        context, 'Price', '$rupee 1.2Cr', 'City', 'Bangalore'),
+                        context,
+                        'Price',
+                        '$rupee ${widget.property?.price}Cr',
+                        'City',
+                        '${widget.property?.city}'),
                     verticalGap(defaultPadding / 2),
                   ],
                 ),
@@ -113,9 +148,9 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             ),
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.all(defaultPadding),
-                      child: Text(dummyText),
+                    Padding(
+                      padding: const EdgeInsets.all(defaultPadding),
+                      child: Text('${widget.property?.description}'),
                     )
                   ],
                 ),
@@ -186,14 +221,27 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
         children: [
           InkWell(
             onTap: () {
-              Navigator.pushNamed(context, PropertyDetailScreen.routePath,
-                  arguments: 1);
+              // Navigator.pushNamed(context, PropertyDetailScreen.routePath,
+              //     arguments: 1);
             },
-            child: Image.asset(
-              'assets/images/flats.jpg',
-              height: 250,
-              width: double.maxFinite,
+            child: CachedNetworkImage(
+              imageUrl: widget.property?.mainImage ?? '',
               fit: BoxFit.fitWidth,
+              width: double.infinity,
+              height: 250,
+              placeholder: (context, url) => const SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(),
+              ),
+              errorWidget: (context, url, error) => Container(
+                alignment: Alignment.center,
+                width: double.infinity,
+                height: 250,
+                child: const Text(
+                  'Unable to load image',
+                ),
+              ),
             ),
           ),
           Align(
@@ -213,7 +261,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           size: 15, color: Colors.white),
                       horizontalGap(8),
                       Text(
-                        '8 Photos',
+                        '${widget.property?.images?.where((element) => element.mediaType == MediaType.Image.name).length} Photos',
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium
@@ -234,7 +282,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                           size: 15, color: Colors.white),
                       horizontalGap(8),
                       Text(
-                        '2 Videos',
+                        '${widget.property?.images?.where((element) => element.mediaType == MediaType.Video.name).length} Videos',
                         style: Theme.of(context)
                             .textTheme
                             .labelMedium

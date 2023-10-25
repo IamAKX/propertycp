@@ -53,13 +53,13 @@ List<PropertyTypeModel> propertyType = [
       id: 6, name: 'Investments', iconPath: 'assets/images/investment.png'),
 ];
 
-Map<int, String> propertyTypeName = {
-  1: 'Flats',
-  2: 'Plots',
-  3: 'Resale',
-  4: 'Farmlands',
-  5: 'Commercial Properties',
-  6: 'Investments',
-};
+List<String> propertyTypeName = [
+  'Flats',
+  'Plots',
+  'Resale',
+  'Farmlands',
+  'Commercial Properties',
+  'Investments',
+];
 
 List<String> leadType = ['Property', 'Loan', 'Construction', 'Interior'];

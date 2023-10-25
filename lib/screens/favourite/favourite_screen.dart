@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:propertycp/models/property_model.dart';
 
 import '../../widgets/property_card.dart';
 
@@ -23,7 +24,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   getBody(BuildContext context) {
     return ListView.builder(
       itemCount: 10,
-      itemBuilder: (context, index) => const PropertyCard(),
+      itemBuilder: (context, index) => PropertyCard(property: PropertyModel()),
     );
   }
 }

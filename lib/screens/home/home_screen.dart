@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
-import 'package:propertycp/main.dart';
 import 'package:propertycp/models/user_model.dart';
 import 'package:propertycp/screens/property_listing/property_listing_screen.dart';
 import 'package:propertycp/utils/colors.dart';
@@ -13,7 +11,6 @@ import 'package:provider/provider.dart';
 
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
-import '../../utils/dummy.dart';
 import '../../utils/theme.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,7 +23,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedOption = 'Bangalore';
-  int selectedPropertyId = 1;
   UserModel? userModel;
   late ApiProvider _api;
 
@@ -178,7 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     onTap: () {
                       Navigator.pushNamed(
                           context, PropertyListingScreen.routePath,
-                          arguments: e.id);
+                          arguments: [selectedOption, e.name]);
                     },
                     child: Card(
                       elevation: 2,

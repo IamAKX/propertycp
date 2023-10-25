@@ -2,13 +2,23 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:propertycp/models/property_media.dart';
+import 'package:propertycp/models/property_model.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_video.dart';
+import 'package:propertycp/services/snakbar_service.dart';
 import 'package:propertycp/utils/colors.dart';
+import 'package:propertycp/utils/enum.dart';
 import 'package:propertycp/utils/theme.dart';
+import 'package:provider/provider.dart';
+import 'package:sn_progress_dialog/options/completed.dart';
+import 'package:sn_progress_dialog/progress_dialog.dart';
+
+import '../../../services/storage_service.dart';
 
 class PickPropertyImages extends StatefulWidget {
-  const PickPropertyImages({super.key});
+  const PickPropertyImages({super.key, required this.model});
   static const String routePath = '/pickPropertyImages';
+  final PropertyModel model;
 
   @override
   State<PickPropertyImages> createState() => _PickPropertyImagesState();
@@ -16,25 +26,67 @@ class PickPropertyImages extends StatefulWidget {
 
 class _PickPropertyImagesState extends State<PickPropertyImages> {
   List<File> imageList = [];
+  late StorageProvider _storageProvider;
 
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _storageProvider = Provider.of<StorageProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Pick Property Image'),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pushReplacementNamed(
-                  context, PickPropertyVideos.routePath);
-            },
-            child: Text(
-              'Next',
-              style: Theme.of(context)
-                  .textTheme
-                  .labelLarge
-                  ?.copyWith(color: Colors.white),
-            ),
+            onPressed: _storageProvider.status == StorageStatus.loading
+                ? null
+                : () async {
+                    if (imageList.length < 3) {
+                      SnackBarService.instance
+                          .showSnackBarError('Add atleast 3 image');
+                      return;
+                    }
+
+                    ProgressDialog pd = ProgressDialog(context: context);
+                    pd.show(
+                      max: imageList.length,
+                      msg: 'Uploading images...',
+                      progressType: ProgressType.valuable,
+                      closeWithDelay: 2,
+                      completed: Completed(completedMsg: 'Upload complete'),
+                      onStatusChanged: (status) {
+                        if (status == DialogStatus.closed) {
+                          Navigator.pushReplacementNamed(
+                              context, PickPropertyVideos.routePath,
+                              arguments: widget.model);
+                        }
+                      },
+                    );
+
+                    for (var i = 0; i < imageList.length; i++) {
+                      String link = await _storageProvider.uploadPropertyImage(
+                          imageList.elementAt(i), MediaType.Image.name);
+                      widget.model.images?.add(PropertyMedia(
+                          mediaType: MediaType.Image.name, url: link));
+                      pd.update(value: i + 1);
+                    }
+                    widget.model.mainImage = widget.model.images
+                        ?.firstWhere((element) =>
+                            element.mediaType == MediaType.Image.name)
+                        .url;
+                  },
+            child: _storageProvider.status == StorageStatus.loading
+                ? const SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: CircularProgressIndicator(),
+                  )
+                : Text(
+                    'Next',
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelLarge
+                        ?.copyWith(color: Colors.white),
+                  ),
           ),
         ],
       ),
