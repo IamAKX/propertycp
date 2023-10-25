@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1060669901402",
+    "project_id": "propertycp-mobile",
+    "storage_bucket": "propertycp-mobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060669901402:android:7a7f05c92b13e81001e663",
+        "android_client_info": {
+          "package_name": "com.propertycp.propertycp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjnShJ88d_VD12xVMByEKvQvU_IzwItRY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
