@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:propertycp/models/property_media.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/constants.dart';
-import 'package:propertycp/utils/dummy.dart';
 import 'package:propertycp/utils/enum.dart';
 import 'package:propertycp/utils/theme.dart';
+import 'package:propertycp/widgets/custom_image_viewer.dart';
+import 'package:propertycp/widgets/custom_video_player.dart';
 import 'package:propertycp/widgets/gaps.dart';
+import 'package:propertycp/widgets/video_gallery.dart';
 
 import '../../main.dart';
 import '../../models/property_model.dart';
@@ -219,76 +223,107 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       width: double.infinity,
       child: Stack(
         children: [
-          InkWell(
-            onTap: () {
-              // Navigator.pushNamed(context, PropertyDetailScreen.routePath,
-              //     arguments: 1);
-            },
-            child: CachedNetworkImage(
-              imageUrl: widget.property?.mainImage ?? '',
-              fit: BoxFit.fitWidth,
-              width: double.infinity,
-              height: 250,
-              placeholder: (context, url) => const SizedBox(
-                width: 50,
-                height: 50,
-                child: CircularProgressIndicator(),
-              ),
-              errorWidget: (context, url, error) => Container(
-                alignment: Alignment.center,
-                width: double.infinity,
-                height: 250,
-                child: const Text(
-                  'Unable to load image',
-                ),
-              ),
+          Container(
+            height: 250,
+            width: double.infinity,
+            child: CarouselSlider(
+              items: widget.property?.images?.map((e) {
+                if (e.mediaType == MediaType.Image.name) {
+                  return buildImageBanner(e);
+                } else {
+                  return buildVideoBanner(e);
+                }
+              }).toList(),
+              options: CarouselOptions(viewportFraction: 1, height: 250),
             ),
           ),
+          // InkWell(
+          //   onTap: () {
+          //     // Navigator.pushNamed(context, PropertyDetailScreen.routePath,
+          //     //     arguments: 1);
+          //   },
+          //   child: CachedNetworkImage(
+          //     imageUrl: widget.property?.mainImage ?? '',
+          //     fit: BoxFit.fitWidth,
+          //     width: double.infinity,
+          //     height: 250,
+          //     placeholder: (context, url) => const SizedBox(
+          //       width: 50,
+          //       height: 50,
+          //       child: CircularProgressIndicator(),
+          //     ),
+          //     errorWidget: (context, url, error) => Container(
+          //       alignment: Alignment.center,
+          //       width: double.infinity,
+          //       height: 250,
+          //       child: const Text(
+          //         'Unable to load image',
+          //       ),
+          //     ),
+          //   ),
+          // ),
           Align(
             alignment: Alignment.bottomRight,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Row(
-                    children: [
-                      const Icon(LineAwesomeIcons.image,
-                          size: 15, color: Colors.white),
-                      horizontalGap(8),
-                      Text(
-                        '${widget.property?.images?.where((element) => element.mediaType == MediaType.Image.name).length} Photos',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(color: Colors.white),
-                      ),
-                    ],
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, CustomImageViewer.routePath,
+                        arguments: widget.property?.images
+                            ?.where((e) => e.mediaType == MediaType.Image.name)
+                            .map((e) => e.url!)
+                            .toList());
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      children: [
+                        const Icon(LineAwesomeIcons.image,
+                            size: 15, color: Colors.white),
+                        horizontalGap(8),
+                        Text(
+                          '${widget.property?.images?.where((element) => element.mediaType == MediaType.Image.name).length} Photos',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.all(8),
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.7),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: Row(
-                    children: [
-                      const Icon(LineAwesomeIcons.video_file,
-                          size: 15, color: Colors.white),
-                      horizontalGap(8),
-                      Text(
-                        '${widget.property?.images?.where((element) => element.mediaType == MediaType.Video.name).length} Videos',
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(color: Colors.white),
-                      ),
-                    ],
+                InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(context, VideoGallery.routePath,
+                        arguments: widget.property?.images
+                            ?.where((e) => e.mediaType == MediaType.Video.name)
+                            .toList());
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.7),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: Row(
+                      children: [
+                        const Icon(LineAwesomeIcons.video_file,
+                            size: 15, color: Colors.white),
+                        horizontalGap(8),
+                        Text(
+                          '${widget.property?.images?.where((element) => element.mediaType == MediaType.Video.name).length} Videos',
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(color: Colors.white),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -296,6 +331,73 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget buildImageBanner(PropertyMedia e) {
+    return InkWell(
+      onTap: () {
+        Navigator.pushNamed(context, CustomImageViewer.routePath,
+            arguments: widget.property?.images
+                ?.where((e) => e.mediaType == MediaType.Image.name)
+                .map((e) => e.url!)
+                .toList());
+      },
+      child: CachedNetworkImage(
+        imageUrl: e.url ?? '',
+        fit: BoxFit.fitWidth,
+        width: double.infinity,
+        height: 250,
+        placeholder: (context, url) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+        errorWidget: (context, url, error) => Container(
+          alignment: Alignment.center,
+          width: double.infinity,
+          height: 250,
+          child: const Text(
+            'Unable to load image',
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildVideoBanner(PropertyMedia e) {
+    return Stack(
+      children: [
+        CachedNetworkImage(
+          imageUrl: e.thumbnail ?? '',
+          fit: BoxFit.fitWidth,
+          width: double.infinity,
+          height: 250,
+          placeholder: (context, url) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          errorWidget: (context, url, error) => Container(
+            alignment: Alignment.center,
+            width: double.infinity,
+            height: 250,
+            child: const Text(
+              'Unable to load image',
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child: InkWell(
+            onTap: () {
+              Navigator.pushNamed(context, CustomVideoPlayer.routePath,
+                  arguments: e.url);
+            },
+            child: const Icon(
+              Icons.play_arrow_rounded,
+              size: 50,
+              color: primary,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -413,4 +413,41 @@ class ApiProvider extends ChangeNotifier {
     }
     return propertyListModel;
   }
+
+  Future<PropertyListModel?> getAllFavProperties(List<int> ids) async {
+    status = ApiStatus.loading;
+    PropertyListModel? propertyListModel;
+    notifyListeners();
+    Map<String, List<int>> req = {"ids": ids};
+    try {
+      Response response = await _dio.post(
+        '${Api.properties}get-multiple',
+        data: json.encode(req),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        propertyListModel = PropertyListModel.fromMap(response.data);
+
+        status = ApiStatus.success;
+        notifyListeners();
+        return propertyListModel;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return propertyListModel;
+  }
 }

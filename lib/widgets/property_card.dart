@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+
 import 'package:propertycp/main.dart';
 import 'package:propertycp/models/property_model.dart';
 import 'package:propertycp/screens/property_listing/property_detail.dart';
@@ -10,8 +11,10 @@ import '../utils/theme.dart';
 import 'gaps.dart';
 
 class PropertyCard extends StatefulWidget {
-  const PropertyCard({super.key, required this.property});
+  PropertyCard({Key? key, required this.property, this.reload})
+      : super(key: key);
   final PropertyModel? property;
+  Function? reload;
 
   @override
   State<PropertyCard> createState() => _PropertyCardState();
@@ -38,6 +41,9 @@ class _PropertyCardState extends State<PropertyCard> {
                               context, PropertyDetailScreen.routePath,
                               arguments: widget.property)
                           .then((value) {
+                        if (widget.reload != null) {
+                          widget.reload!();
+                        }
                         setState(() {});
                       });
                     },
@@ -46,9 +52,7 @@ class _PropertyCardState extends State<PropertyCard> {
                       fit: BoxFit.fitWidth,
                       width: double.infinity,
                       height: 150,
-                      placeholder: (context, url) => const SizedBox(
-                        width: 50,
-                        height: 50,
+                      placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator(),
                       ),
                       errorWidget: (context, url, error) => Container(
@@ -74,6 +78,9 @@ class _PropertyCardState extends State<PropertyCard> {
                         } else {
                           SharedpreferenceKey.addToFavourite(
                               widget.property?.id?.toString() ?? '');
+                        }
+                        if (widget.reload != null) {
+                          widget.reload!();
                         }
                         setState(() {});
                       },

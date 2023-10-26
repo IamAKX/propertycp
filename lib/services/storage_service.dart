@@ -72,4 +72,18 @@ class StorageProvider extends ChangeNotifier {
     notifyListeners();
     return downloadLink;
   }
+
+   Future<String> uploadPropertyThumbnail(File file) async {
+    status = StorageStatus.loading;
+    notifyListeners();
+    String path =
+        'property/thumbnail/${file.path.split(Platform.pathSeparator).last}';
+    final ref = FirebaseStorage.instance.ref().child(path);
+    UploadTask? uploadTask = ref.putFile(file);
+    final snapshot = await uploadTask.whenComplete(() {});
+    final downloadLink = await snapshot.ref.getDownloadURL();
+    status = StorageStatus.success;
+    notifyListeners();
+    return downloadLink;
+  }
 }

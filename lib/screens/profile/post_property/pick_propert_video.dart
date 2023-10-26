@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -76,8 +77,25 @@ class _PickPropertyVideosState extends State<PickPropertyVideos> {
                     for (var i = 0; i < videoList.length; i++) {
                       String link = await _storageProvider.uploadPropertyImage(
                           videoList.elementAt(i), MediaType.Video.name);
-                      widget.model.images?.add(PropertyMedia(
-                          mediaType: MediaType.Video.name, url: link));
+                      String? thumbNail = '';
+                      thumbNail = await VideoThumbnail.thumbnailFile(
+                        video: link,
+                        imageFormat: ImageFormat.JPEG,
+                        maxHeight:
+                            250, // specify the height of the thumbnail, let the width auto-scaled to keep the source aspect ratio
+                        quality: 99,
+                      );
+                      log(thumbNail!);
+                      File tmb = File(thumbNail!);
+                      thumbNail =
+                          await _storageProvider.uploadPropertyThumbnail(tmb);
+                      widget.model.images?.add(
+                        PropertyMedia(
+                          mediaType: MediaType.Video.name,
+                          url: link,
+                          thumbnail: thumbNail,
+                        ),
+                      );
                       pd.update(value: i + 1);
                     }
                   },

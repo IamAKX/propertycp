@@ -8,15 +8,15 @@ class PropertyModel {
   int? id;
   String? title;
   String? subTitle;
-  double? price;
-  double? numberOfRooms;
+  String? price;
+  String? numberOfRooms;
   String? bhk;
   String? location;
   String? city;
   String? mainImage;
   List<PropertyMedia>? images;
   String? type;
-  double? area;
+  String? area;
   String? areaUnit;
   String? description;
   String? createdDate;
@@ -44,15 +44,15 @@ class PropertyModel {
     int? id,
     String? title,
     String? subTitle,
-    double? price,
-    double? numberOfRooms,
+    String? price,
+    String? numberOfRooms,
     String? bhk,
     String? location,
     String? city,
     String? mainImage,
     List<PropertyMedia>? images,
     String? type,
-    double? area,
+    String? area,
     String? areaUnit,
     String? description,
     String? createdDate,
@@ -104,15 +104,15 @@ class PropertyModel {
       id: map['id']?.toInt(),
       title: map['title'],
       subTitle: map['subTitle'],
-      price: map['price']?.toDouble(),
-      numberOfRooms: map['numberOfRooms']?.toDouble(),
+      price: map['price'],
+      numberOfRooms: map['numberOfRooms'],
       bhk: map['bhk'],
       location: map['location'],
       city: map['city'],
       mainImage: map['mainImage'],
       images: map['images'] != null ? List<PropertyMedia>.from(map['images']?.map((x) => PropertyMedia.fromMap(x))) : null,
       type: map['type'],
-      area: map['area']?.toDouble(),
+      area: map['area'],
       areaUnit: map['areaUnit'],
       description: map['description'],
       createdDate: map['createdDate'],

@@ -44,9 +44,9 @@ class _PostPropertyState extends State<PostProperty> {
               }
               model.title = _titleCtrl.text;
               model.subTitle = _subTitleCtrl.text;
-              model.price = double.tryParse(_priceCtrl.text);
+              model.price = _priceCtrl.text;
               model.bhk = _bhkCtrl.text;
-              model.area = double.tryParse(_areaCtrl.text);
+              model.area = _areaCtrl.text;
               model.areaUnit = selectedAreaType;
               model.city = selectedCity;
               model.type = selectedPropertyType == 'Commercial Properties'
@@ -97,7 +97,7 @@ class _PostPropertyState extends State<PostProperty> {
         verticalGap(defaultPadding / 2),
         TextField(
           controller: _priceCtrl,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          keyboardType: TextInputType.name,
           decoration: const InputDecoration(
             hintText: 'Price : Eg. 1.2 Cr or 85 lacs',
             label: Text('Price'),
@@ -120,8 +120,7 @@ class _PostPropertyState extends State<PostProperty> {
               flex: 4,
               child: TextField(
                 controller: _areaCtrl,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.name,
                 decoration: const InputDecoration(
                   hintText: 'Area : Eg. 1 or 1490.5',
                   label: Text('Area'),
@@ -248,14 +247,7 @@ class _PostPropertyState extends State<PostProperty> {
       SnackBarService.instance.showSnackBarError('All Fields are mandatory');
       return false;
     }
-    if (!isFloat(_priceCtrl.text)) {
-      SnackBarService.instance.showSnackBarError('Price should be numeric');
-      return false;
-    }
-    if (!isFloat(_areaCtrl.text)) {
-      SnackBarService.instance.showSnackBarError('Area should be numeric');
-      return false;
-    }
+
     return true;
   }
 }

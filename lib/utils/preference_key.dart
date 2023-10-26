@@ -21,4 +21,10 @@ class SharedpreferenceKey {
     favIds.remove(id);
     return prefs.setStringList(favourite, favIds);
   }
+
+  static List<int> getAllFavIds() {
+    List<String> favIds = prefs.getStringList(favourite) ?? [];
+
+    return favIds.map((e) => int.parse(e)).toList();
+  }
 }

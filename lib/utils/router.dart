@@ -11,7 +11,11 @@ import 'package:propertycp/screens/home_container/home_container.dart';
 import 'package:propertycp/screens/profile/kyc/kyc.dart';
 import 'package:propertycp/screens/leads/create_lead.dart';
 import 'package:propertycp/screens/onboarding/login_screen.dart';
+import 'package:propertycp/widgets/custom_image_viewer.dart';
+import 'package:propertycp/widgets/custom_video_player.dart';
+import 'package:propertycp/widgets/video_gallery.dart';
 
+import '../models/property_media.dart';
 import '../screens/appIntro/app_intro_screen.dart';
 
 class NavRoute {
@@ -45,6 +49,21 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const KycScreen());
       case PostProperty.routePath:
         return MaterialPageRoute(builder: (_) => const PostProperty());
+      case CustomVideoPlayer.routePath:
+        return MaterialPageRoute(
+            builder: (_) => CustomVideoPlayer(
+                  videoUrl: settings.arguments as String,
+                ));
+      case CustomImageViewer.routePath:
+        return MaterialPageRoute(
+            builder: (_) => CustomImageViewer(
+                  link: settings.arguments as List<String>,
+                ));
+      case VideoGallery.routePath:
+        return MaterialPageRoute(
+            builder: (_) => VideoGallery(
+                  link: settings.arguments as List<PropertyMedia>,
+                ));
       case PickPropertyImages.routePath:
         return MaterialPageRoute(
             builder: (_) => PickPropertyImages(
