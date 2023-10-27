@@ -15,7 +15,9 @@ class DateTimeFormatter {
   static String timesAgo(String rawDate) {
     try {
       DateTime date = DateFormat(databaseFormat).parse(rawDate);
-      return timeago.format(date, locale: 'en_short');
+      return timeago.format(
+        date,
+      );
     } catch (e) {
       return '';
     }

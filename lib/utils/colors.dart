@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 const primary = Color(0xff607d8b);
+const secondary = Colors.blue; // Color(0xff607d8b);
 
 const scaffoldBackgroundColor = Color(0xffF5F6F9);
 const dividerColor = Color.fromARGB(255, 228, 223, 223);

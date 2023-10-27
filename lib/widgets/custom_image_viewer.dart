@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_image_viewer/gallery_image_viewer.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:whatsapp_share/whatsapp_share.dart';
 
 import '../utils/theme.dart';
 
@@ -21,6 +23,24 @@ class _CustomImageViewerState extends State<CustomImageViewer> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gallery'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              String message = "";
+              for (var element in widget.link) {
+                message = "$message$element\n\n";
+              }
+
+              await WhatsappShare.share(
+                text:
+                    'Hi, kinldy tap on these links to view the property pictures.',
+                linkUrl: message,
+                phone: ' ',
+              );
+            },
+            icon: Icon(Icons.share),
+          ),
+        ],
       ),
       body: getBody(),
     );
@@ -49,9 +69,7 @@ class _CustomImageViewerState extends State<CustomImageViewer> {
           child: CachedNetworkImage(
             imageUrl: widget.link.elementAt(index),
             fit: BoxFit.cover,
-            placeholder: (context, url) => const SizedBox(
-              width: 50,
-              height: 50,
+            placeholder: (context, url) => const Center(
               child: CircularProgressIndicator(),
             ),
             errorWidget: (context, url, error) => Container(

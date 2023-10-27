@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:propertycp/models/lead_comment_model.dart';
 import 'package:propertycp/models/leads_model.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/date_time_formatter.dart';
@@ -67,7 +68,7 @@ class _CreateLeadState extends State<CreateLead> {
       padding: const EdgeInsets.all(defaultPadding),
       children: [
         Text(
-          'Property Type',
+          'Lead Type',
           style:
               Theme.of(context).textTheme.bodySmall?.copyWith(color: primary),
         ),
@@ -75,9 +76,9 @@ class _CreateLeadState extends State<CreateLead> {
           value: selectedType,
           underline: null,
           isExpanded: true,
-          barrierLabel: 'Property Type',
+          barrierLabel: 'Type',
           hint: Text(
-            'Select Property Type',
+            'Select type',
             style: TextStyle(
               fontSize: 14,
               color: Theme.of(context).hintColor,
@@ -138,9 +139,12 @@ class _CreateLeadState extends State<CreateLead> {
                   .showSnackBarError('Invalid phone number');
               return;
             }
-
-            LeadsModel lead = LeadsModel(
+            LeadCommentModel comment = LeadCommentModel(
                 comment: _commentCtrl.text,
+                timeStamp: DateTimeFormatter.now(),
+                userType: userModel?.userType);
+            LeadsModel lead = LeadsModel(
+                leadCommentModel: [comment],
                 createdById: userModel?.id,
                 fullName: _nameCtrl.text,
                 mobileNo: _phoneCtrl.text,

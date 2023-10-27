@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/leads_model.dart';
 import 'package:propertycp/models/list/lead_list.dart';
+import 'package:propertycp/screens/leads/lead_comment.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/date_time_formatter.dart';
 import 'package:propertycp/utils/dummy.dart';
@@ -140,11 +141,17 @@ class _LeadListState extends State<LeadList> {
         padding: const EdgeInsets.only(bottom: defaultPadding * 3),
         itemBuilder: (context, index) => ListTile(
               title: Text(leadListModel?.data?.elementAt(index).fullName ?? ''),
-              subtitle: Text(DateTimeFormatter.timesAgo(
-                  leadListModel?.data?.elementAt(index).updatedDate ?? '')),
+              subtitle: Text(
+                DateTimeFormatter.timesAgo(
+                    leadListModel?.data?.elementAt(index).updatedDate ?? ''),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
               onTap: () {
-                showCommentDialog(context,
-                    leadListModel?.data?.elementAt(index).comment ?? '');
+                Navigator.pushNamed(context, LeadCommentScreen.routePath,
+                        arguments: leadListModel?.data?.elementAt(index).id)
+                    .then((value) => loadScreen());
+                // showCommentDialog(context,
+                //     leadListModel?.data?.elementAt(index).comment ?? '');
               },
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,

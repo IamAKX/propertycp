@@ -138,16 +138,16 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context)
               .textTheme
               .labelMedium
-              ?.copyWith(color: Colors.blueGrey, fontWeight: FontWeight.w700),
+              ?.copyWith(color: primary, fontWeight: FontWeight.w700),
         ),
         OTPTextField(
           length: 6,
           width: MediaQuery.of(context).size.width - (defaultPadding * 3),
           fieldWidth: 40,
           otpFieldStyle: OtpFieldStyle(
-            enabledBorderColor: Colors.blueGrey,
+            enabledBorderColor: primary,
             borderColor: Colors.white54,
-            focusBorderColor: Colors.blueGrey,
+            focusBorderColor: primary,
           ),
           textFieldAlignment: MainAxisAlignment.spaceAround,
           fieldStyle: FieldStyle.underline,

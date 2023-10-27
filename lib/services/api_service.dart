@@ -133,7 +133,7 @@ class ApiProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         userModel = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, userModel.id ?? 0);
+
         status = ApiStatus.success;
         notifyListeners();
         return userModel;
@@ -202,6 +202,71 @@ class ApiProvider extends ChangeNotifier {
       Response response = await _dio.put(
         '${Api.user}$id',
         data: json.encode(user),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
+  }
+
+  Future<bool> updatePropety(Map<String, dynamic> property, int id) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.put(
+        '${Api.properties}$id',
+        data: json.encode(property),
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+      if (response.statusCode == 200) {
+        status = ApiStatus.success;
+        notifyListeners();
+        return true;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      SnackBarService.instance.showSnackBarError(e.toString());
+      log(e.toString());
+    }
+    status = ApiStatus.failed;
+    notifyListeners();
+    return false;
+  }
+
+  Future<bool> deletePropety(int id) async {
+    status = ApiStatus.loading;
+    notifyListeners();
+    try {
+      Response response = await _dio.delete(
+        '${Api.properties}$id',
         options: Options(
           contentType: 'application/json',
           responseType: ResponseType.json,
@@ -298,6 +363,43 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return leadListModel;
+  }
+
+  Future<LeadsModel?> getLeadsById(int leadId) async {
+    status = ApiStatus.loading;
+    LeadsModel? leadsModel;
+    notifyListeners();
+    log('${Api.leads}$leadId');
+    try {
+      Response response = await _dio.get(
+        '${Api.leads}$leadId',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        leadsModel = LeadsModel.fromMap(response.data['data']);
+
+        status = ApiStatus.success;
+        notifyListeners();
+        log('resp : $leadsModel');
+        return leadsModel;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return leadsModel;
   }
 
   Future<bool> updateLead(Map<String, dynamic> lead, int id) async {
@@ -412,6 +514,42 @@ class ApiProvider extends ChangeNotifier {
       log(e.toString());
     }
     return propertyListModel;
+  }
+
+  Future<PropertyModel?> getPropertyById(int id) async {
+    status = ApiStatus.loading;
+    PropertyModel? propertyModel;
+    notifyListeners();
+
+    try {
+      Response response = await _dio.get(
+        '${Api.properties}$id',
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        propertyModel = PropertyModel.fromMap(response.data['data']);
+
+        status = ApiStatus.success;
+        notifyListeners();
+        return propertyModel;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return propertyModel;
   }
 
   Future<PropertyListModel?> getAllFavProperties(List<int> ids) async {

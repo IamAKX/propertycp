@@ -58,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Container(
-          color: Colors.blueGrey,
+          color: primary,
           width: double.infinity,
           height: 250,
           child: Column(
@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Image.asset(
                             e.iconPath!,
                             width: 40,
-                            color: Colors.blueGrey,
+                            color: primary,
                           ),
                           verticalGap(defaultPadding / 2),
                           Flexible(
@@ -195,7 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .textTheme
                                   .labelLarge
                                   ?.copyWith(
-                                    color: Colors.blueGrey,
+                                    color: primary,
                                   ),
                               textAlign: TextAlign.center,
                             ),

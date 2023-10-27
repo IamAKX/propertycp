@@ -39,7 +39,7 @@ class _PropertyCardState extends State<PropertyCard> {
                     onTap: () {
                       Navigator.pushNamed(
                               context, PropertyDetailScreen.routePath,
-                              arguments: widget.property)
+                              arguments: widget.property?.id)
                           .then((value) {
                         if (widget.reload != null) {
                           widget.reload!();
@@ -127,7 +127,7 @@ class _PropertyCardState extends State<PropertyCard> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${widget.property?.price ?? ''} Cr'),
+                  Text('${widget.property?.price ?? ''}'),
                   Text(widget.property?.bhk ?? ''),
                 ],
               ),

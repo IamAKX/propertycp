@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/models/property_media.dart';
+import 'package:propertycp/screens/edit_property.dart/edit_property_text.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/constants.dart';
 import 'package:propertycp/utils/enum.dart';
@@ -11,44 +12,89 @@ import 'package:propertycp/widgets/custom_image_viewer.dart';
 import 'package:propertycp/widgets/custom_video_player.dart';
 import 'package:propertycp/widgets/gaps.dart';
 import 'package:propertycp/widgets/video_gallery.dart';
+import 'package:provider/provider.dart';
 
 import '../../main.dart';
 import '../../models/property_model.dart';
+import '../../models/user_model.dart';
+import '../../services/api_service.dart';
+import '../../services/snakbar_service.dart';
 import '../../utils/preference_key.dart';
 import '../leads/create_lead.dart';
 
 class PropertyDetailScreen extends StatefulWidget {
-  const PropertyDetailScreen({super.key, required this.property});
-  final PropertyModel? property;
+  const PropertyDetailScreen({super.key, required this.propertyId});
+  final int propertyId;
   static const String routePath = '/propertyDeatilScreen';
   @override
   State<PropertyDetailScreen> createState() => _PropertyDetailScreenState();
 }
 
 class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
+  UserModel? userModel;
+  late ApiProvider _api;
+  PropertyModel? property;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => loadScreen(),
+    );
+  }
+
+  loadScreen() async {
+    _api.getUserById(SharedpreferenceKey.getUserId()).then((value) async {
+      userModel = value;
+      property = await _api.getPropertyById(widget.propertyId);
+
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    SnackBarService.instance.buildContext = context;
+    _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Details'),
         actions: [
           IconButton(
+              onPressed: () {
+                _api.deletePropety(property?.id ?? -1).then((value) {
+                  SnackBarService.instance
+                      .showSnackBarSuccess('Property deleted');
+                  Navigator.pop(context);
+                });
+              },
+              icon: Icon(Icons.delete)),
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, EditPropertyText.routePath,
+                        arguments: property?.id)
+                    .then((value) {
+                  loadScreen();
+                });
+              },
+              icon: Icon(Icons.edit)),
+          IconButton(
             onPressed: () {
               if (prefs
                       .getStringList(SharedpreferenceKey.favourite)
-                      ?.contains(widget.property?.id?.toString()) ??
+                      ?.contains(property?.id?.toString()) ??
                   false) {
                 SharedpreferenceKey.removeFromFavourite(
-                    widget.property?.id?.toString() ?? '');
+                    property?.id?.toString() ?? '');
               } else {
                 SharedpreferenceKey.addToFavourite(
-                    widget.property?.id?.toString() ?? '');
+                    property?.id?.toString() ?? '');
               }
               setState(() {});
             },
             icon: (prefs
                         .getStringList(SharedpreferenceKey.favourite)
-                        ?.contains(widget.property?.id?.toString()) ??
+                        ?.contains(property?.id?.toString()) ??
                     false)
                 ? const Icon(
                     Icons.favorite,
@@ -60,12 +106,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           ),
         ],
       ),
-      body: getBody(context),
+      body: _api.status == ApiStatus.loading
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : getBody(context),
       floatingActionButton: FloatingActionButton(
         child: const Icon(
           Icons.person_add_alt,
           color: Colors.white,
         ),
+        backgroundColor: secondary,
         onPressed: () {
           Navigator.pushNamed(context, CreateLead.routePath,
               arguments: 'Flats');
@@ -91,7 +142,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       padding: const EdgeInsets.all(defaultPadding / 2),
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        color: primary,
+                        color: secondary, //primary,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(5),
                           topRight: Radius.circular(5),
@@ -106,19 +157,15 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       ),
                     ),
                     verticalGap(defaultPadding / 2),
-                    rowWithTwoItem(
-                        context,
-                        'Type',
-                        '${widget.property?.type}',
-                        'Area',
-                        '${widget.property?.area} ${widget.property?.areaUnit}'),
+                    rowWithTwoItem(context, 'Type', '${property?.type}', 'Area',
+                        '${property?.area} ${property?.areaUnit}'),
                     verticalGap(defaultPadding / 2),
                     rowWithTwoItem(
                         context,
                         'Price',
-                        '$rupee ${widget.property?.price}Cr',
+                        '$rupee ${property?.price}',
                         'City',
-                        '${widget.property?.city}'),
+                        '${property?.city}'),
                     verticalGap(defaultPadding / 2),
                   ],
                 ),
@@ -138,7 +185,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                       padding: const EdgeInsets.all(defaultPadding / 2),
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        color: primary,
+                        color: secondary, // primary,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(5),
                           topRight: Radius.circular(5),
@@ -154,7 +201,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(defaultPadding),
-                      child: Text('${widget.property?.description}'),
+                      child: Text('${property?.description}'),
                     )
                   ],
                 ),
@@ -227,7 +274,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             height: 250,
             width: double.infinity,
             child: CarouselSlider(
-              items: widget.property?.images?.map((e) {
+              items: property?.images?.map((e) {
                 if (e.mediaType == MediaType.Image.name) {
                   return buildImageBanner(e);
                 } else {
@@ -243,7 +290,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
           //     //     arguments: 1);
           //   },
           //   child: CachedNetworkImage(
-          //     imageUrl: widget.property?.mainImage ?? '',
+          //     imageUrl: property?.mainImage ?? '',
           //     fit: BoxFit.fitWidth,
           //     width: double.infinity,
           //     height: 250,
@@ -270,7 +317,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.pushNamed(context, CustomImageViewer.routePath,
-                        arguments: widget.property?.images
+                        arguments: property?.images
                             ?.where((e) => e.mediaType == MediaType.Image.name)
                             .map((e) => e.url!)
                             .toList());
@@ -287,7 +334,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             size: 15, color: Colors.white),
                         horizontalGap(8),
                         Text(
-                          '${widget.property?.images?.where((element) => element.mediaType == MediaType.Image.name).length} Photos',
+                          '${property?.images?.where((element) => element.mediaType == MediaType.Image.name).length} Photos',
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium
@@ -300,7 +347,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                 InkWell(
                   onTap: () {
                     Navigator.pushNamed(context, VideoGallery.routePath,
-                        arguments: widget.property?.images
+                        arguments: property?.images
                             ?.where((e) => e.mediaType == MediaType.Video.name)
                             .toList());
                   },
@@ -316,7 +363,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                             size: 15, color: Colors.white),
                         horizontalGap(8),
                         Text(
-                          '${widget.property?.images?.where((element) => element.mediaType == MediaType.Video.name).length} Videos',
+                          '${property?.images?.where((element) => element.mediaType == MediaType.Video.name).length} Videos',
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium
@@ -338,7 +385,7 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
     return InkWell(
       onTap: () {
         Navigator.pushNamed(context, CustomImageViewer.routePath,
-            arguments: widget.property?.images
+            arguments: property?.images
                 ?.where((e) => e.mediaType == MediaType.Image.name)
                 .map((e) => e.url!)
                 .toList());

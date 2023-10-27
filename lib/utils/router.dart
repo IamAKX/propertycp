@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/property_model.dart';
+import 'package:propertycp/screens/edit_property.dart/edit_property_image.dart';
+import 'package:propertycp/screens/edit_property.dart/edit_property_text.dart';
+import 'package:propertycp/screens/edit_property.dart/edit_property_video.dart';
+import 'package:propertycp/screens/leads/lead_comment.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_images.dart';
 import 'package:propertycp/screens/profile/post_property/pick_propert_video.dart';
 import 'package:propertycp/screens/profile/post_property/post_property_screen.dart';
@@ -27,6 +31,11 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case HomeContainer.routePath:
         return MaterialPageRoute(builder: (_) => const HomeContainer());
+      case LeadCommentScreen.routePath:
+        return MaterialPageRoute(
+            builder: (_) => LeadCommentScreen(
+                  leadId: settings.arguments as int,
+                ));
       case PropertyListingScreen.routePath:
         return MaterialPageRoute(
           builder: (_) => PropertyListingScreen(
@@ -36,7 +45,7 @@ class NavRoute {
       case PropertyDetailScreen.routePath:
         return MaterialPageRoute(
           builder: (_) => PropertyDetailScreen(
-            property: settings.arguments as PropertyModel,
+            propertyId: settings.arguments as int,
           ),
         );
       case CreateLead.routePath:
@@ -76,6 +85,24 @@ class NavRoute {
                 ));
       case UserListScreen.routePath:
         return MaterialPageRoute(builder: (_) => const UserListScreen());
+      case EditPropertyText.routePath:
+        return MaterialPageRoute(
+          builder: (_) => EditPropertyText(
+            propertyId: settings.arguments as int,
+          ),
+        );
+      case EditPropertyImage.routePath:
+        return MaterialPageRoute(
+          builder: (_) => EditPropertyImage(
+            propertyId: settings.arguments as int,
+          ),
+        );
+      case EditPropertyVideo.routePath:
+        return MaterialPageRoute(
+          builder: (_) => EditPropertyVideo(
+            propertyId: settings.arguments as int,
+          ),
+        );
       case UserDetail.routePath:
         return MaterialPageRoute(
             builder: (_) => UserDetail(

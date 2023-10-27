@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:propertycp/models/property_media.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/widgets/custom_video_player.dart';
+import 'package:whatsapp_share/whatsapp_share.dart';
 
 import '../utils/theme.dart';
 
@@ -21,6 +22,24 @@ class _VideoGalleryState extends State<VideoGallery> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gallery'),
+        actions: [
+          IconButton(
+            onPressed: () async {
+              String message = "";
+              for (PropertyMedia element in widget.link) {
+                message = "$message${element.url}\n\n";
+              }
+
+              await WhatsappShare.share(
+                text:
+                    'Hi, kinldy tap on these links to view the property pictures.',
+                linkUrl: message,
+                phone: ' ',
+              );
+            },
+            icon: Icon(Icons.share),
+          ),
+        ],
       ),
       body: getBody(),
     );
@@ -48,9 +67,7 @@ class _VideoGalleryState extends State<VideoGallery> {
                 imageUrl: widget.link.elementAt(index).thumbnail ?? '',
                 fit: BoxFit.cover,
                 height: double.infinity,
-                placeholder: (context, url) => const SizedBox(
-                  width: 50,
-                  height: 50,
+                placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(),
                 ),
                 errorWidget: (context, url, error) => Container(

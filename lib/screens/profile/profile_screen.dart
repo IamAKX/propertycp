@@ -279,7 +279,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: primary,
+                        color: secondary,
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: Colors.white,
@@ -322,7 +322,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       icon: const Icon(
                         Icons.edit,
                         size: 20,
-                        color: primary,
+                        color: secondary,
                       ),
                     ),
                   ],

@@ -54,11 +54,15 @@ class MyApp extends StatelessWidget {
         title: 'PropertyCP',
         theme: ThemeData(
           useMaterial3: false,
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: Colors.blueGrey).copyWith(
+          elevatedButtonTheme: const ElevatedButtonThemeData(
+            style: ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll(secondary),
+            ),
+          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: primary).copyWith(
             background: scaffoldBackgroundColor,
-            primary: Colors.blueGrey,
-            secondary: Colors.blueGrey,
+            primary: primary,
+            secondary: secondary,
           ),
           textTheme:
               GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)

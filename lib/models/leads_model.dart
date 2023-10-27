@@ -1,12 +1,16 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
+import 'package:propertycp/models/lead_comment_model.dart';
+
 class LeadsModel {
   int? id;
   String? propertyType;
   String? mobileNo;
   String? fullName;
   String? status;
-  String? comment;
+  List<LeadCommentModel>? leadCommentModel;
   String? createdDate;
   String? updatedDate;
   int? createdById;
@@ -16,7 +20,7 @@ class LeadsModel {
     this.mobileNo,
     this.fullName,
     this.status,
-    this.comment,
+    this.leadCommentModel,
     this.createdDate,
     this.updatedDate,
     this.createdById,
@@ -28,7 +32,7 @@ class LeadsModel {
     String? mobileNo,
     String? fullName,
     String? status,
-    String? comment,
+    List<LeadCommentModel>? leadCommentModel,
     String? createdDate,
     String? updatedDate,
     int? createdById,
@@ -39,7 +43,7 @@ class LeadsModel {
       mobileNo: mobileNo ?? this.mobileNo,
       fullName: fullName ?? this.fullName,
       status: status ?? this.status,
-      comment: comment ?? this.comment,
+      leadCommentModel: leadCommentModel ?? this.leadCommentModel,
       createdDate: createdDate ?? this.createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
       createdById: createdById ?? this.createdById,
@@ -53,7 +57,7 @@ class LeadsModel {
       'mobileNo': mobileNo,
       'fullName': fullName,
       'status': status,
-      'comment': comment,
+      'leadCommentModel': leadCommentModel?.map((x) => x?.toMap())?.toList(),
       'createdDate': createdDate,
       'updatedDate': updatedDate,
       'createdById': createdById,
@@ -67,7 +71,10 @@ class LeadsModel {
       mobileNo: map['mobileNo'],
       fullName: map['fullName'],
       status: map['status'],
-      comment: map['comment'],
+      leadCommentModel: map['leadCommentModel'] != null
+          ? List<LeadCommentModel>.from(
+              map['leadCommentModel']?.map((x) => LeadCommentModel.fromMap(x)))
+          : null,
       createdDate: map['createdDate'],
       updatedDate: map['updatedDate'],
       createdById: map['createdById']?.toInt(),
@@ -81,7 +88,7 @@ class LeadsModel {
 
   @override
   String toString() {
-    return 'LeadsModel(id: $id, propertyType: $propertyType, mobileNo: $mobileNo, fullName: $fullName, status: $status, comment: $comment, createdDate: $createdDate, updatedDate: $updatedDate, createdById: $createdById)';
+    return 'LeadsModel(id: $id, propertyType: $propertyType, mobileNo: $mobileNo, fullName: $fullName, status: $status, leadCommentModel: $leadCommentModel, createdDate: $createdDate, updatedDate: $updatedDate, createdById: $createdById)';
   }
 
   @override
@@ -94,7 +101,7 @@ class LeadsModel {
         other.mobileNo == mobileNo &&
         other.fullName == fullName &&
         other.status == status &&
-        other.comment == comment &&
+        listEquals(other.leadCommentModel, leadCommentModel) &&
         other.createdDate == createdDate &&
         other.updatedDate == updatedDate &&
         other.createdById == createdById;
@@ -107,7 +114,7 @@ class LeadsModel {
         mobileNo.hashCode ^
         fullName.hashCode ^
         status.hashCode ^
-        comment.hashCode ^
+        leadCommentModel.hashCode ^
         createdDate.hashCode ^
         updatedDate.hashCode ^
         createdById.hashCode;

@@ -66,8 +66,9 @@ class _PropertyListingScreenState extends State<PropertyListingScreen> {
     }
     return ListView.builder(
       itemCount: propertyListModel?.data?.length ?? 0,
-      itemBuilder: (context, index) =>
-          PropertyCard(property: propertyListModel?.data?.elementAt(index)),
+      itemBuilder: (context, index) => PropertyCard(
+          property: propertyListModel?.data?.elementAt(index),
+          reload: loadScreen),
     );
   }
 }

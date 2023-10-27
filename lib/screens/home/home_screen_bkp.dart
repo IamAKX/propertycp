@@ -93,7 +93,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
                 'View All',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.blueGrey,
+                      color: primary,
                     ),
               ),
             ),
@@ -123,7 +123,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
               height: 300,
               width: 300,
               decoration: BoxDecoration(
-                color: Colors.blueGrey.withOpacity(0.2),
+                color: primary.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
             ),
@@ -190,7 +190,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
               //               .textTheme
               //               .headlineSmall
               //               ?.copyWith(
-              //                   color: Colors.blueGrey,
+              //                   color: primary,
               //                   fontWeight: FontWeight.bold),
               //         ),
               //         const TextSpan(text: 'Let\'s start exploring'),
@@ -303,7 +303,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
                             width: 40,
                             color: propertyType.elementAt(index).id ==
                                     selectedPropertyId
-                                ? Colors.blueGrey
+                                ? primary
                                 : hintColor,
                           ),
                           verticalGap(defaultPadding / 2),
@@ -316,7 +316,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
                                   ?.copyWith(
                                     color: propertyType.elementAt(index).id ==
                                             selectedPropertyId
-                                        ? Colors.blueGrey
+                                        ? primary
                                         : hintColor,
                                     fontWeight:
                                         propertyType.elementAt(index).id ==
