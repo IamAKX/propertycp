@@ -57,7 +57,7 @@ class LeadsModel {
       'mobileNo': mobileNo,
       'fullName': fullName,
       'status': status,
-      'leadCommentModel': leadCommentModel?.map((x) => x?.toMap())?.toList(),
+      'leadCommentModel': leadCommentModel?.map((x) => x.toMap()).toList(),
       'createdDate': createdDate,
       'updatedDate': updatedDate,
       'createdById': createdById,

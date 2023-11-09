@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:propertycp/models/property_model.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/list/property_list.dart';
@@ -47,7 +46,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
     _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Favourite'),
+        title: const Text('Favourite'),
       ),
       body: _api.status == ApiStatus.loading
           ? const Center(

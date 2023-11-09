@@ -4,7 +4,6 @@ import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/screens/favourite/favourite_screen.dart';
 import 'package:propertycp/screens/leads/lead_screen.dart';
 import 'package:propertycp/screens/profile/profile_screen.dart';
-import 'package:propertycp/utils/colors.dart';
 import '../home/home_screen.dart';
 
 class HomeContainer extends StatefulWidget {

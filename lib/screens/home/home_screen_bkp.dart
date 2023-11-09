@@ -5,7 +5,6 @@ import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/constants.dart';
 import 'package:propertycp/widgets/gaps.dart';
 
-import '../../utils/dummy.dart';
 import '../../utils/theme.dart';
 
 class HomeScreenBkp extends StatefulWidget {
@@ -41,6 +40,7 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(homePageProfilePic),
                 child: (false)
+                    // ignore: dead_code
                     ? Image.asset(
                         'assets/images/profile_image_placeholder.png',
                         height: homePageProfilePic,
@@ -104,7 +104,9 @@ class _HomeScreenBkpState extends State<HomeScreenBkp> {
           child: ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: 10,
-            itemBuilder: (context, index) {},
+            itemBuilder: (context, index) {
+              return Container();
+            },
           ),
         ),
       ],

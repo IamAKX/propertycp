@@ -89,7 +89,7 @@ class PropertyModel {
       'location': location,
       'city': city,
       'mainImage': mainImage,
-      'images': images?.map((x) => x?.toMap())?.toList(),
+      'images': images?.map((x) => x.toMap()).toList(),
       'type': type,
       'area': area,
       'areaUnit': areaUnit,
