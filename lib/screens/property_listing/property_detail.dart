@@ -60,24 +60,30 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
       appBar: AppBar(
         title: const Text('Details'),
         actions: [
-          IconButton(
-              onPressed: () {
-                _api.deletePropety(property?.id ?? -1).then((value) {
-                  SnackBarService.instance
-                      .showSnackBarSuccess('Property deleted');
-                  Navigator.pop(context);
-                });
-              },
-              icon: Icon(Icons.delete)),
-          IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, EditPropertyText.routePath,
-                        arguments: property?.id)
-                    .then((value) {
-                  loadScreen();
-                });
-              },
-              icon: Icon(Icons.edit)),
+          Visibility(
+            visible: userModel?.userType == UserType.Admin.name,
+            child: IconButton(
+                onPressed: () {
+                  _api.deletePropety(property?.id ?? -1).then((value) {
+                    SnackBarService.instance
+                        .showSnackBarSuccess('Property deleted');
+                    Navigator.pop(context);
+                  });
+                },
+                icon: Icon(Icons.delete)),
+          ),
+          Visibility(
+            visible: userModel?.userType == UserType.Admin.name,
+            child: IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, EditPropertyText.routePath,
+                          arguments: property?.id)
+                      .then((value) {
+                    loadScreen();
+                  });
+                },
+                icon: Icon(Icons.edit)),
+          ),
           IconButton(
             onPressed: () {
               if (prefs

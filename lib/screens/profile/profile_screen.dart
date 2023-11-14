@@ -20,6 +20,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../models/user_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/enum.dart';
 import '../../utils/preference_key.dart';
 import '../../utils/theme.dart';
 
@@ -104,42 +105,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 indent: defaultPadding * 3,
                 color: dividerColor,
               ),
-              ListTile(
-                leading: const Icon(
-                  LineAwesomeIcons.building,
-                  color: textColorDark,
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: ListTile(
+                  leading: const Icon(
+                    LineAwesomeIcons.building,
+                    color: textColorDark,
+                  ),
+                  title: Text(
+                    'Post Property',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+                  ),
+                  trailing: adminTrailingWidget(context),
+                  onTap: () {
+                    Navigator.pushNamed(context, PostProperty.routePath);
+                  },
                 ),
-                title: Text(
-                  'Post Property',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(),
-                ),
-                trailing: adminTrailingWidget(context),
-                onTap: () {
-                  Navigator.pushNamed(context, PostProperty.routePath);
-                },
               ),
-              const Divider(
-                indent: defaultPadding * 3,
-                color: dividerColor,
-              ),
-              ListTile(
-                leading: const Icon(
-                  LineAwesomeIcons.user_plus,
-                  color: textColorDark,
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: const Divider(
+                  indent: defaultPadding * 3,
+                  color: dividerColor,
                 ),
-                title: Text(
-                  'Users',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(),
-                ),
-                trailing: adminTrailingWidget(context),
-                onTap: () {
-                  Navigator.pushNamed(context, UserListScreen.routePath)
-                      .then((value) => loadScreen());
-                },
               ),
-              const Divider(
-                indent: defaultPadding * 3,
-                color: dividerColor,
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: ListTile(
+                  leading: const Icon(
+                    LineAwesomeIcons.user_plus,
+                    color: textColorDark,
+                  ),
+                  title: Text(
+                    'Users',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+                  ),
+                  trailing: adminTrailingWidget(context),
+                  onTap: () {
+                    Navigator.pushNamed(context, UserListScreen.routePath)
+                        .then((value) => loadScreen());
+                  },
+                ),
+              ),
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: const Divider(
+                  indent: defaultPadding * 3,
+                  color: dividerColor,
+                ),
               ),
               ListTile(
                 leading: const Icon(

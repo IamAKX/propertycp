@@ -115,16 +115,24 @@ class _LoginScreenState extends State<LoginScreen> {
           child: TextButton(
             onPressed: _timerActive
                 ? null
-                : () {
+                : () async {
                     if (_phoneCtrl.text.length != 10 ||
                         !isNumeric(_phoneCtrl.text)) {
                       SnackBarService.instance.showSnackBarError(
                           'Enter valid 10 digit mobil number');
                       return;
                     }
+                    
+                    UserModel? user =
+                        await _api.getUserByPhone(_phoneCtrl.text);
+                    if (user == null) {
+                      SnackBarService.instance.showSnackBarError(
+                          'This phone number is not registered');
+                      return;
+                    }
                     startTimer();
                     otpCode = getOTPCode();
-                    // _api.sendOtp(_phoneCtrl.text, otpCode);
+                    _api.sendOtp(_phoneCtrl.text, otpCode);
                   },
             child: Text(
               _timerActive
@@ -168,14 +176,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       return;
                     }
 
-                    if (_otpCtrl.text != '123456') {
+                    if (_otpCtrl.text != otpCode) {
                       SnackBarService.instance.showSnackBarError('Invalid OTP');
                       return;
                     }
 
-                    // UserModel? user =
-                    //     await _api.getUserByPhone(_phoneCtrl.text);
-                    UserModel? user = await _api.getUserById(2);
+                    UserModel? user =
+                        await _api.getUserByPhone(_phoneCtrl.text);
+                    // UserModel? user = await _api.getUserById(2);
                     if (user == null) {
                       SnackBarService.instance.showSnackBarError(
                           'User not registered with this phone number');
