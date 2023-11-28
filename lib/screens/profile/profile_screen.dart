@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:propertycp/main.dart';
 import 'package:propertycp/screens/onboarding/login_screen.dart';
 import 'package:propertycp/screens/profile/kyc/kyc.dart';
 import 'package:propertycp/screens/profile/post_property/post_property_screen.dart';
@@ -210,6 +211,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 trailing: const Icon(Icons.chevron_right, color: Colors.red),
                 onTap: () {
+                  prefs.clear();
                   Navigator.of(context).pushNamedAndRemoveUntil(
                       LoginScreen.routePath, (route) => false);
                 },
@@ -261,36 +263,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Positioned(
                   bottom: 1,
                   left: 75,
-                  child: InkWell(
-                    onTap: isImageUploading
-                        ? null
-                        : () async {
-                            final ImagePicker picker = ImagePicker();
-                            final XFile? image = await picker.pickImage(
-                                source: ImageSource.gallery);
-                            if (image != null) {
-                              File imageFile = File(image.path);
-                              setState(() {
-                                isImageUploading = true;
+                  child: PopupMenuButton(
+                    itemBuilder: (context) {
+                      return const [
+                        PopupMenuItem(
+                          value: 'edit',
+                          child: Text('Edit profile image'),
+                        ),
+                        PopupMenuItem(
+                          value: 'delete',
+                          child: Text('Delete profile image'),
+                        ),
+                      ];
+                    },
+                    enabled: !isImageUploading,
+                    onSelected: (value) async {
+                      switch (value) {
+                        case 'edit':
+                          final ImagePicker picker = ImagePicker();
+                          final XFile? image = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          if (image != null) {
+                            File imageFile = File(image.path);
+                            setState(() {
+                              isImageUploading = true;
+                            });
+                            _storageProvider
+                                .uploadProfileImage(
+                                    imageFile, userModel?.id ?? -1)
+                                .then((value) async {
+                              userModel?.image = value;
+                              _api
+                                  .updateUser(userModel?.toMap() ?? {},
+                                      userModel?.id ?? -1)
+                                  .then((value) {
+                                isImageUploading = false;
+                                loadScreen();
                               });
-                              _storageProvider
-                                  .uploadProfileImage(
-                                      imageFile, userModel?.id ?? -1)
-                                  .then((value) async {
-                                userModel?.image = value;
-                                _api
-                                    .updateUser(userModel?.toMap() ?? {},
-                                        userModel?.id ?? -1)
-                                    .then((value) {
-                                  isImageUploading = false;
-                                  loadScreen();
-                                });
-                              });
+                            });
+                          }
+                          return;
+                        case 'delete':
+                          userModel?.image = '';
+                          _api
+                              .updateUser(
+                                  userModel?.toMap() ?? {}, userModel?.id ?? -1)
+                              .then((value) {
+                            if (value) {
+                              loadScreen();
+                              SnackBarService.instance
+                                  .showSnackBarSuccess('Profile image removed');
+                            } else {
+                              SnackBarService.instance
+                                  .showSnackBarError('Failed to update');
                             }
-                          },
+                          });
+                          return;
+                      }
+                    },
                     child: Container(
-                      width: 40,
-                      height: 40,
+                      width: 30,
+                      height: 30,
                       decoration: BoxDecoration(
                         color: secondary,
                         shape: BoxShape.circle,
@@ -302,7 +335,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: const Icon(
                         Icons.edit,
                         color: Colors.white,
-                        size: 15,
+                        size: 10,
                       ),
                     ),
                   ),
