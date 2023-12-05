@@ -1,17 +1,16 @@
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/main.dart';
+import 'package:propertycp/screens/adminlead/lead_users.dart';
 import 'package:propertycp/screens/onboarding/login_screen.dart';
 import 'package:propertycp/screens/profile/kyc/kyc.dart';
 import 'package:propertycp/screens/profile/post_property/post_property_screen.dart';
 import 'package:propertycp/screens/profile/users/user_list.dart';
 import 'package:propertycp/services/storage_service.dart';
 import 'package:propertycp/utils/colors.dart';
-import 'package:propertycp/utils/dummy.dart';
 import 'package:propertycp/widgets/gaps.dart';
 import 'package:propertycp/widgets/user_profile_image.dart';
 import 'package:provider/provider.dart';
@@ -144,6 +143,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   trailing: adminTrailingWidget(context),
                   onTap: () {
                     Navigator.pushNamed(context, UserListScreen.routePath)
+                        .then((value) => loadScreen());
+                  },
+                ),
+              ),
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: const Divider(
+                  indent: defaultPadding * 3,
+                  color: dividerColor,
+                ),
+              ),
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name,
+                child: ListTile(
+                  leading: const Icon(
+                    Icons.real_estate_agent_outlined,
+                    color: textColorDark,
+                  ),
+                  title: Text(
+                    'Leads',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(),
+                  ),
+                  trailing: adminTrailingWidget(context),
+                  onTap: () {
+                    Navigator.pushNamed(context, AllLeadUserScreen.routePath)
                         .then((value) => loadScreen());
                   },
                 ),

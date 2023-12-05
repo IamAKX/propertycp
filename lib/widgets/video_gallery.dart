@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:propertycp/models/property_media.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/widgets/custom_video_player.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 
 import '../utils/theme.dart';
@@ -25,17 +26,19 @@ class _VideoGalleryState extends State<VideoGallery> {
         actions: [
           IconButton(
             onPressed: () async {
-              String message = "";
+              String message =
+                  "Hi, kindly tap on these links to view the property videos.";
               for (PropertyMedia element in widget.link) {
                 message = "$message${element.url}\n\n";
               }
 
-              await WhatsappShare.share(
-                text:
-                    'Hi, kinldy tap on these links to view the property pictures.',
-                linkUrl: message,
-                phone: ' ',
-              );
+              Share.share(message, subject: 'Property Videos');
+              // await WhatsappShare.share(
+              //   text:
+              //       'Hi, kindly tap on these links to view the property pictures.',
+              //   linkUrl: message,
+              //   phone: ' ',
+              // );
             },
             icon: Icon(Icons.share),
           ),
@@ -49,8 +52,8 @@ class _VideoGalleryState extends State<VideoGallery> {
     return GridView.builder(
       padding: const EdgeInsets.all(defaultPadding / 2),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.0,
+        crossAxisCount: 1,
+        childAspectRatio: 16 / 9,
         crossAxisSpacing: defaultPadding / 2,
         mainAxisSpacing: defaultPadding / 2,
       ),
@@ -65,8 +68,8 @@ class _VideoGalleryState extends State<VideoGallery> {
             children: [
               CachedNetworkImage(
                 imageUrl: widget.link.elementAt(index).thumbnail ?? '',
-                fit: BoxFit.cover,
-                height: double.infinity,
+                fit: BoxFit.fitWidth,
+                width: double.infinity,
                 placeholder: (context, url) => const Center(
                   child: CircularProgressIndicator(),
                 ),

@@ -148,8 +148,8 @@ class _PickPropertyVideosState extends State<PickPropertyVideos> {
         : GridView.builder(
             padding: const EdgeInsets.all(defaultPadding / 2),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              childAspectRatio: 1.0,
+              crossAxisCount: 1,
+              childAspectRatio: 16 / 9,
               crossAxisSpacing: defaultPadding / 2,
               mainAxisSpacing: defaultPadding / 2,
             ),
@@ -184,7 +184,7 @@ class _PickPropertyVideosState extends State<PickPropertyVideos> {
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   }
                 },
               );

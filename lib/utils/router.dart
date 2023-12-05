@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/property_model.dart';
+import 'package:propertycp/screens/adminlead/lead_list.dart';
+import 'package:propertycp/screens/adminlead/lead_users.dart';
 import 'package:propertycp/screens/edit_property.dart/edit_property_image.dart';
 import 'package:propertycp/screens/edit_property.dart/edit_property_text.dart';
 import 'package:propertycp/screens/edit_property.dart/edit_property_video.dart';
@@ -56,6 +58,13 @@ class NavRoute {
         );
       case KycScreen.routePath:
         return MaterialPageRoute(builder: (_) => const KycScreen());
+      case AllLeadUserScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const AllLeadUserScreen());
+      case AdminLeadList.routePath:
+        return MaterialPageRoute(
+            builder: (_) => AdminLeadList(
+                  userId: settings.arguments as int,
+                ));
       case PostProperty.routePath:
         return MaterialPageRoute(builder: (_) => const PostProperty());
       case CustomVideoPlayer.routePath:

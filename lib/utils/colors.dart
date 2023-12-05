@@ -37,10 +37,12 @@ Color getColorByStatus(String status) {
       return pendingColor;
     case 'APPROVED':
     case 'ACTIVE':
+    case 'OPEN':
       return acceptedColor;
     case 'DECLINED':
     case 'SUSPENDED':
     case 'BLOCKED':
+    case 'CLOSE':
       return rejectedColor;
     default:
       return textColorDark;

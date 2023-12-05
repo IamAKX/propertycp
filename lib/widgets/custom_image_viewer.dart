@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_image_viewer/gallery_image_viewer.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:whatsapp_share/whatsapp_share.dart';
 
@@ -26,17 +27,20 @@ class _CustomImageViewerState extends State<CustomImageViewer> {
         actions: [
           IconButton(
             onPressed: () async {
-              String message = "";
+              String message =
+                  "Hi, kindly tap on these links to view the property pictures.";
               for (var element in widget.link) {
                 message = "$message$element\n\n";
               }
 
-              await WhatsappShare.share(
-                text:
-                    'Hi, kinldy tap on these links to view the property pictures.',
-                linkUrl: message,
-                phone: ' ',
-              );
+              Share.share(message, subject: 'Property Images');
+
+              // await WhatsappShare.share(
+              //   text:
+              //       'Hi, kindly tap on these links to view the property pictures.',
+              //   linkUrl: message,
+              //   phone: ' ',
+              // );
             },
             icon: Icon(Icons.share),
           ),

@@ -6,11 +6,14 @@ import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/leads_model.dart';
+import 'package:propertycp/models/leads_model_with_user.dart';
 import 'package:propertycp/models/list/lead_list.dart';
 import 'package:propertycp/models/list/property_list.dart';
 import 'package:propertycp/models/property_model.dart';
+import 'package:propertycp/utils/helper_method.dart';
 
 import '../main.dart';
+import '../models/list/lead_with_user_list.dart';
 import '../models/list/user_list.dart';
 import '../models/user_model.dart';
 import '../utils/api.dart';
@@ -85,7 +88,7 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.loading;
     UserModel? userModel;
     notifyListeners();
-
+    log('${Api.user}mobileNo/$phone');
     try {
       Response response = await _dio.get(
         '${Api.user}mobileNo/$phone',
@@ -623,5 +626,49 @@ class ApiProvider extends ChangeNotifier {
     status = ApiStatus.failed;
     notifyListeners();
     return false;
+  }
+
+  Future<Map<UserModel, int>?> getAllLeads() async {
+    status = ApiStatus.loading;
+    LeadWithUserListModel? leadListModel;
+    Map<UserModel, int>? userMap = {};
+    notifyListeners();
+
+    try {
+      Response response = await _dio.get(
+        Api.leads,
+        options: Options(
+          contentType: 'application/json',
+          responseType: ResponseType.json,
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        leadListModel = LeadWithUserListModel.fromMap(response.data);
+        for (LeadsModelWithUser lead in leadListModel.data ?? []) {
+          if (containsUser(userMap, lead.createdById!) == 0) {
+            userMap[lead.createdBy!] = 1;
+          } else {
+            userMap[lead.createdBy!] = 1 + userMap[lead.createdBy!]!;
+          }
+        }
+
+        status = ApiStatus.success;
+        notifyListeners();
+        return userMap;
+      }
+    } on DioException catch (e) {
+      status = ApiStatus.failed;
+      var resBody = e.response?.data ?? {};
+      log(e.response?.data.toString() ?? e.response.toString());
+      notifyListeners();
+      // SnackBarService.instance
+      //     .showSnackBarError('Error : ${resBody['message']}');
+    } catch (e) {
+      status = ApiStatus.failed;
+      notifyListeners();
+      log(e.toString());
+    }
+    return userMap;
   }
 }
