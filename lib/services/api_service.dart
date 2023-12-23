@@ -52,18 +52,10 @@ class ApiProvider extends ChangeNotifier {
       );
       debugPrint(response.toString());
       if (response.statusCode == 201) {
-        UserModel user = UserModel.fromMap(response.data['data']);
-        prefs.setInt(SharedpreferenceKey.userId, user.id ?? 0);
-        if (user.status == UserStatus.ACTIVE.name) {
-          status = ApiStatus.success;
-          notifyListeners();
-        } else {
-          SnackBarService.instance.showSnackBarError(
-              'Your profile status is \'${user.status}\'. Wait for the admin to activate.');
-          status = ApiStatus.failed;
-          notifyListeners();
-          return false;
-        }
+        SnackBarService.instance
+            .showSnackBarSuccess('User profile is created.');
+        status = ApiStatus.success;
+        notifyListeners();
         return true;
       }
     } on DioException catch (e) {

@@ -192,7 +192,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       return;
                     }
 
-                    if (user.status != UserStatus.ACTIVE.name) {
+                    if (user.status == UserStatus.SUSPENDED.name ||
+                        user.status == UserStatus.BLOCKED.name) {
                       SnackBarService.instance
                           .showSnackBarError('User status is ${user.status}');
                       return;
