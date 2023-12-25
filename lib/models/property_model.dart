@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 
 import 'package:propertycp/models/property_media.dart';
 
@@ -21,6 +21,7 @@ class PropertyModel {
   String? description;
   String? createdDate;
   String? updatedDate;
+  String? builderPhoneNumber;
   PropertyModel({
     this.id,
     this.title,
@@ -38,6 +39,7 @@ class PropertyModel {
     this.description,
     this.createdDate,
     this.updatedDate,
+    this.builderPhoneNumber,
   });
 
   PropertyModel copyWith({
@@ -57,6 +59,7 @@ class PropertyModel {
     String? description,
     String? createdDate,
     String? updatedDate,
+    String? builderPhoneNumber,
   }) {
     return PropertyModel(
       id: id ?? this.id,
@@ -75,28 +78,66 @@ class PropertyModel {
       description: description ?? this.description,
       createdDate: createdDate ?? this.createdDate,
       updatedDate: updatedDate ?? this.updatedDate,
+      builderPhoneNumber: builderPhoneNumber ?? this.builderPhoneNumber,
     );
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'title': title,
-      'subTitle': subTitle,
-      'price': price,
-      'numberOfRooms': numberOfRooms,
-      'bhk': bhk,
-      'location': location,
-      'city': city,
-      'mainImage': mainImage,
-      'images': images?.map((x) => x.toMap()).toList(),
-      'type': type,
-      'area': area,
-      'areaUnit': areaUnit,
-      'description': description,
-      'createdDate': createdDate,
-      'updatedDate': updatedDate,
-    };
+    final result = <String, dynamic>{};
+  
+    if(id != null){
+      result.addAll({'id': id});
+    }
+    if(title != null){
+      result.addAll({'title': title});
+    }
+    if(subTitle != null){
+      result.addAll({'subTitle': subTitle});
+    }
+    if(price != null){
+      result.addAll({'price': price});
+    }
+    if(numberOfRooms != null){
+      result.addAll({'numberOfRooms': numberOfRooms});
+    }
+    if(bhk != null){
+      result.addAll({'bhk': bhk});
+    }
+    if(location != null){
+      result.addAll({'location': location});
+    }
+    if(city != null){
+      result.addAll({'city': city});
+    }
+    if(mainImage != null){
+      result.addAll({'mainImage': mainImage});
+    }
+    if(images != null){
+      result.addAll({'images': images!.map((x) => x?.toMap()).toList()});
+    }
+    if(type != null){
+      result.addAll({'type': type});
+    }
+    if(area != null){
+      result.addAll({'area': area});
+    }
+    if(areaUnit != null){
+      result.addAll({'areaUnit': areaUnit});
+    }
+    if(description != null){
+      result.addAll({'description': description});
+    }
+    if(createdDate != null){
+      result.addAll({'createdDate': createdDate});
+    }
+    if(updatedDate != null){
+      result.addAll({'updatedDate': updatedDate});
+    }
+    if(builderPhoneNumber != null){
+      result.addAll({'builderPhoneNumber': builderPhoneNumber});
+    }
+  
+    return result;
   }
 
   factory PropertyModel.fromMap(Map<String, dynamic> map) {
@@ -117,6 +158,7 @@ class PropertyModel {
       description: map['description'],
       createdDate: map['createdDate'],
       updatedDate: map['updatedDate'],
+      builderPhoneNumber: map['builderPhoneNumber'],
     );
   }
 
@@ -126,12 +168,13 @@ class PropertyModel {
 
   @override
   String toString() {
-    return 'PropertyModel(id: $id, title: $title, subTitle: $subTitle, price: $price, numberOfRooms: $numberOfRooms, bhk: $bhk, location: $location, city: $city, mainImage: $mainImage, images: $images, type: $type, area: $area, areaUnit: $areaUnit, description: $description, createdDate: $createdDate, updatedDate: $updatedDate)';
+    return 'PropertyModel(id: $id, title: $title, subTitle: $subTitle, price: $price, numberOfRooms: $numberOfRooms, bhk: $bhk, location: $location, city: $city, mainImage: $mainImage, images: $images, type: $type, area: $area, areaUnit: $areaUnit, description: $description, createdDate: $createdDate, updatedDate: $updatedDate, builderPhoneNumber: $builderPhoneNumber)';
   }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
+    final listEquals = const DeepCollectionEquality().equals;
   
     return other is PropertyModel &&
       other.id == id &&
@@ -149,7 +192,8 @@ class PropertyModel {
       other.areaUnit == areaUnit &&
       other.description == description &&
       other.createdDate == createdDate &&
-      other.updatedDate == updatedDate;
+      other.updatedDate == updatedDate &&
+      other.builderPhoneNumber == builderPhoneNumber;
   }
 
   @override
@@ -169,6 +213,7 @@ class PropertyModel {
       areaUnit.hashCode ^
       description.hashCode ^
       createdDate.hashCode ^
-      updatedDate.hashCode;
+      updatedDate.hashCode ^
+      builderPhoneNumber.hashCode;
   }
 }

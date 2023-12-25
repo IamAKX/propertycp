@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:propertycp/models/leads_model.dart';
 import 'package:propertycp/models/list/lead_list.dart';
 import 'package:propertycp/screens/leads/lead_comment.dart';
+import 'package:propertycp/screens/property_listing/property_detail.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/date_time_formatter.dart';
 import 'package:propertycp/utils/dummy.dart';
@@ -168,11 +169,92 @@ class _AdminLeadListState extends State<AdminLeadList> {
                       color: Colors.green,
                     ),
                   ),
+                  IconButton(
+                    onPressed: () {
+                      showInfoPopup(
+                          context, leadListModel?.data?.elementAt(index));
+                    },
+                    icon: const Icon(
+                      Icons.info,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ],
               ),
             ),
         separatorBuilder: (context, index) =>
             const Divider(color: dividerColor),
         itemCount: leadListModel?.data?.length ?? 0);
+  }
+
+  void showInfoPopup(BuildContext context, LeadsModel? lead) {
+    AlertDialog alert = AlertDialog(
+      title: Text("Details"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Lead Type'),
+              Text(
+                lead?.leadPropertyType ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Property Type'),
+              Text(
+                lead?.propertyType ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              )
+            ],
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Cancel',
+            style: Theme.of(context)
+                .textTheme
+                .bodyMedium
+                ?.copyWith(color: primary),
+          ),
+        ),
+        if (lead?.propertyId != null && lead?.propertyId != 0)
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushNamed(context, PropertyDetailScreen.routePath,
+                  arguments: lead?.propertyId);
+            },
+            child: Text(
+              'View Property',
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Colors.blue),
+            ),
+          )
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (context) => alert,
+    );
   }
 }

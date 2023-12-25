@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/property_model.dart';
+import 'package:propertycp/models/property_short_model.dart';
 import 'package:propertycp/screens/adminlead/lead_list.dart';
 import 'package:propertycp/screens/adminlead/lead_users.dart';
 import 'package:propertycp/screens/edit_property.dart/edit_property_image.dart';
@@ -53,7 +54,7 @@ class NavRoute {
       case CreateLead.routePath:
         return MaterialPageRoute(
           builder: (_) => CreateLead(
-            type: settings.arguments as String,
+            propertyShortModel: settings.arguments as PropertyShortModel,
           ),
         );
       case KycScreen.routePath:

@@ -25,6 +25,7 @@ class _PostPropertyState extends State<PostProperty> {
   final TextEditingController _bhkCtrl = TextEditingController();
   final TextEditingController _areaCtrl = TextEditingController();
   final TextEditingController _descriptionCtrl = TextEditingController();
+  final TextEditingController _builderPropertyCtrl = TextEditingController();
   String? selectedPropertyType;
   String? selectedAreaType;
   String? selectedCity;
@@ -46,6 +47,7 @@ class _PostPropertyState extends State<PostProperty> {
               model.subTitle = _subTitleCtrl.text;
               model.price = _priceCtrl.text;
               model.bhk = _bhkCtrl.text;
+              model.builderPhoneNumber = _builderPropertyCtrl.text;
               model.area = _areaCtrl.text;
               model.areaUnit = selectedAreaType;
               model.city = selectedCity;
@@ -110,6 +112,16 @@ class _PostPropertyState extends State<PostProperty> {
           decoration: const InputDecoration(
             hintText: 'BHK : Eg. 3 BHK or 1 RK',
             label: Text('BHK'),
+          ),
+        ),
+        verticalGap(defaultPadding / 2),
+        TextField(
+          controller: _builderPropertyCtrl,
+          keyboardType: TextInputType.phone,
+          maxLength: 10,
+          decoration: const InputDecoration(
+            hintText: 'Enter 10 digit number',
+            label: Text('Builder Phone Number'),
           ),
         ),
         verticalGap(defaultPadding / 2),
@@ -240,6 +252,7 @@ class _PostPropertyState extends State<PostProperty> {
         _priceCtrl.text.isEmpty ||
         _bhkCtrl.text.isEmpty ||
         _areaCtrl.text.isEmpty ||
+        _builderPropertyCtrl.text.isEmpty ||
         _descriptionCtrl.text.isEmpty ||
         (selectedPropertyType?.isEmpty ?? true) ||
         (selectedAreaType?.isEmpty ?? true) ||

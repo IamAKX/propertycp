@@ -3,6 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/models/property_media.dart';
+import 'package:propertycp/models/property_short_model.dart';
 import 'package:propertycp/screens/edit_property.dart/edit_property_text.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/constants.dart';
@@ -13,6 +14,7 @@ import 'package:propertycp/widgets/custom_video_player.dart';
 import 'package:propertycp/widgets/gaps.dart';
 import 'package:propertycp/widgets/video_gallery.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../main.dart';
 import '../../models/property_model.dart';
@@ -118,15 +120,17 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
             )
           : getBody(context),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: secondary,
+        onPressed: () {
+          PropertyShortModel propertyShortModel = PropertyShortModel(
+              propertyId: property?.id, type: property?.type);
+          Navigator.pushNamed(context, CreateLead.routePath,
+              arguments: propertyShortModel);
+        },
         child: const Icon(
           Icons.person_add_alt,
           color: Colors.white,
         ),
-        backgroundColor: secondary,
-        onPressed: () {
-          Navigator.pushNamed(context, CreateLead.routePath,
-              arguments: 'Flats');
-        },
       ),
     );
   }
@@ -212,6 +216,57 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
                   ],
                 ),
               ),
+              Visibility(
+                visible: userModel?.userType == UserType.Admin.name &&
+                    (property?.builderPhoneNumber?.isNotEmpty ?? false),
+                child: Card(
+                  elevation: 5,
+                  margin: const EdgeInsets.fromLTRB(
+                    defaultPadding,
+                    0,
+                    defaultPadding,
+                    defaultPadding,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(defaultPadding / 2),
+                        width: double.infinity,
+                        decoration: const BoxDecoration(
+                          color: secondary, // primary,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
+                        ),
+                        child: Text(
+                          'Builder Phone',
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () async {
+                              launch("tel://${property?.builderPhoneNumber}");
+                            },
+                            icon: const Icon(
+                              Icons.call,
+                              color: Colors.green,
+                            ),
+                          ),
+                          Text('${property?.builderPhoneNumber}'),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -290,31 +345,6 @@ class _PropertyDetailScreenState extends State<PropertyDetailScreen> {
               options: CarouselOptions(viewportFraction: 1, height: 250),
             ),
           ),
-          // InkWell(
-          //   onTap: () {
-          //     // Navigator.pushNamed(context, PropertyDetailScreen.routePath,
-          //     //     arguments: 1);
-          //   },
-          //   child: CachedNetworkImage(
-          //     imageUrl: property?.mainImage ?? '',
-          //     fit: BoxFit.fitWidth,
-          //     width: double.infinity,
-          //     height: 250,
-          //     placeholder: (context, url) => const SizedBox(
-          //       width: 50,
-          //       height: 50,
-          //       child: CircularProgressIndicator(),
-          //     ),
-          //     errorWidget: (context, url, error) => Container(
-          //       alignment: Alignment.center,
-          //       width: double.infinity,
-          //       height: 250,
-          //       child: const Text(
-          //         'Unable to load image',
-          //       ),
-          //     ),
-          //   ),
-          // ),
           Align(
             alignment: Alignment.bottomRight,
             child: Row(

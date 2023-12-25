@@ -2,6 +2,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/leads_model.dart';
 import 'package:propertycp/models/list/lead_list.dart';
+import 'package:propertycp/models/property_short_model.dart';
 import 'package:propertycp/screens/leads/lead_comment.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/date_time_formatter.dart';
@@ -59,7 +60,8 @@ class _LeadListState extends State<LeadList> {
           Icons.add,
         ),
         onPressed: () {
-          Navigator.pushNamed(context, CreateLead.routePath, arguments: '')
+          PropertyShortModel propertyShortModel = PropertyShortModel(propertyId: 0, type: '');
+          Navigator.pushNamed(context, CreateLead.routePath, arguments: propertyShortModel)
               .then((value) {
             loadScreen();
           });

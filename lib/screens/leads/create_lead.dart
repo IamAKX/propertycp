@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:propertycp/models/lead_comment_model.dart';
 import 'package:propertycp/models/leads_model.dart';
+import 'package:propertycp/models/property_short_model.dart';
 import 'package:propertycp/utils/colors.dart';
 import 'package:propertycp/utils/date_time_formatter.dart';
 import 'package:propertycp/utils/enum.dart';
@@ -17,8 +20,8 @@ import '../../utils/constants.dart';
 import '../../utils/preference_key.dart';
 
 class CreateLead extends StatefulWidget {
-  const CreateLead({super.key, required this.type});
-  final String type;
+  const CreateLead({super.key, required this.propertyShortModel});
+  final PropertyShortModel propertyShortModel;
   static const String routePath = '/createLeadScreen';
 
   @override
@@ -29,14 +32,13 @@ class _CreateLeadState extends State<CreateLead> {
   final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _phoneCtrl = TextEditingController();
   final TextEditingController _commentCtrl = TextEditingController();
-  String? selectedType;
-
+  String? selectedLeadType;
+  String? selectedPropertyType;
   UserModel? userModel;
   late ApiProvider _api;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => loadScreen(),
@@ -46,6 +48,7 @@ class _CreateLeadState extends State<CreateLead> {
   loadScreen() async {
     _api.getUserById(SharedpreferenceKey.getUserId()).then((value) {
       setState(() {
+        selectedPropertyType = widget.propertyShortModel.type;
         userModel = value;
       });
     });
@@ -73,7 +76,7 @@ class _CreateLeadState extends State<CreateLead> {
               Theme.of(context).textTheme.bodySmall?.copyWith(color: primary),
         ),
         DropdownButton2<String>(
-          value: selectedType,
+          value: selectedLeadType,
           underline: null,
           isExpanded: true,
           barrierLabel: 'Type',
@@ -92,7 +95,7 @@ class _CreateLeadState extends State<CreateLead> {
           }).toList(),
           onChanged: (value) {
             setState(() {
-              selectedType = value;
+              selectedLeadType = value;
             });
           },
         ),
@@ -129,7 +132,7 @@ class _CreateLeadState extends State<CreateLead> {
             if (_nameCtrl.text.isEmpty ||
                 _phoneCtrl.text.isEmpty ||
                 _commentCtrl.text.isEmpty ||
-                (selectedType?.isEmpty ?? true)) {
+                (selectedLeadType?.isEmpty ?? true)) {
               SnackBarService.instance
                   .showSnackBarError('All fields are mandatory');
               return;
@@ -148,7 +151,11 @@ class _CreateLeadState extends State<CreateLead> {
                 createdById: userModel?.id,
                 fullName: _nameCtrl.text,
                 mobileNo: _phoneCtrl.text,
-                propertyType: selectedType,
+                propertyType: selectedPropertyType?.isNotEmpty ?? false
+                    ? selectedPropertyType
+                    : 'Flats',
+                leadPropertyType: selectedLeadType,
+                propertyId: widget.propertyShortModel.propertyId,
                 createdDate: DateTimeFormatter.now(),
                 updatedDate: DateTimeFormatter.now(),
                 status: LeadStatus.OPEN.name);

@@ -32,6 +32,7 @@ class _EditPropertyTextState extends State<EditPropertyText> {
   final TextEditingController _priceCtrl = TextEditingController();
   final TextEditingController _bhkCtrl = TextEditingController();
   final TextEditingController _areaCtrl = TextEditingController();
+  final TextEditingController _builderPhoneCtrl = TextEditingController();
   final TextEditingController _descriptionCtrl = TextEditingController();
   String? selectedPropertyType;
   String? selectedAreaType;
@@ -53,6 +54,7 @@ class _EditPropertyTextState extends State<EditPropertyText> {
       _subTitleCtrl.text = propertyModel?.subTitle ?? '';
       _priceCtrl.text = propertyModel?.price ?? '';
       _bhkCtrl.text = propertyModel?.bhk ?? '';
+      _builderPhoneCtrl.text = propertyModel?.builderPhoneNumber ?? '';
       _areaCtrl.text = propertyModel?.area ?? '';
       _descriptionCtrl.text = propertyModel?.description ?? '';
       selectedPropertyType = propertyModel?.type ?? '';
@@ -154,6 +156,16 @@ class _EditPropertyTextState extends State<EditPropertyText> {
           decoration: const InputDecoration(
             hintText: 'BHK : Eg. 3 BHK or 1 RK',
             label: Text('BHK'),
+          ),
+        ),
+        verticalGap(defaultPadding / 2),
+        TextField(
+          maxLength: 10,
+          controller: _builderPhoneCtrl,
+          keyboardType: TextInputType.phone,
+          decoration: const InputDecoration(
+            hintText: 'Enter 10 digit phone number',
+            label: Text('Builder Phone Number'),
           ),
         ),
         verticalGap(defaultPadding / 2),

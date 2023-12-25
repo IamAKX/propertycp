@@ -169,7 +169,6 @@ class ApiProvider extends ChangeNotifier {
       if (response.statusCode == 201) {
         status = ApiStatus.failed;
         notifyListeners();
-        // SnackBarService.instance.showSnackBarSuccess('Lead created');
         return true;
       }
     } on DioException catch (e) {
