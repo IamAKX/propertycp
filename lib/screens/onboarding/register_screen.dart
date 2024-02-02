@@ -5,34 +5,38 @@ import 'package:flutter/material.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
-import 'package:propertycp/main.dart';
-import 'package:propertycp/models/user_model.dart';
-import 'package:propertycp/screens/home_container/home_container.dart';
+import 'package:propertycp/screens/onboarding/login_screen.dart';
 import 'package:propertycp/utils/colors.dart';
-import 'package:propertycp/utils/enum.dart';
-import 'package:propertycp/utils/preference_key.dart';
-import 'package:propertycp/utils/theme.dart';
-import 'package:propertycp/widgets/gaps.dart';
-import 'package:propertycp/widgets/loading.dart';
+import 'package:propertycp/utils/date_time_formatter.dart';
+
 import 'package:provider/provider.dart';
 import 'package:string_validator/string_validator.dart';
 
+import '../../main.dart';
+import '../../models/user_model.dart';
 import '../../services/api_service.dart';
 import '../../services/snakbar_service.dart';
+import '../../utils/enum.dart';
 import '../../utils/helper_method.dart';
-import 'register_screen.dart';
+import '../../utils/preference_key.dart';
+import '../../utils/theme.dart';
+import '../../widgets/gaps.dart';
+import '../../widgets/loading.dart';
+import '../home_container/home_container.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
-  static const String routePath = '/loginScreen';
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+  static const String routePath = '/registerScreen';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneCtrl = TextEditingController();
+  final TextEditingController _nameCtrl = TextEditingController();
   final TextEditingController _otpCtrl = TextEditingController();
+  final TextEditingController _referalCtrl = TextEditingController();
 
   String otpCode = '';
   late ApiProvider _api;
@@ -73,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
         backgroundColor: scaffoldBackgroundColor,
         elevation: 0,
         title: Text(
-          'Login',
+          'Register',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: hintColor,
                 fontWeight: FontWeight.bold,
@@ -89,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.all(defaultPadding),
       children: [
         Text(
-          'Lets start with your mobile number',
+          'Create your account now',
           style: Theme.of(context)
               .textTheme
               .displaySmall
@@ -101,6 +105,15 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
               // fontWeight: FontWeight.w900,
               ),
+        ),
+        verticalGap(defaultPadding),
+        TextField(
+          controller: _nameCtrl,
+          keyboardType: TextInputType.name,
+          decoration: const InputDecoration(
+            hintText: 'Full Name',
+            label: Text('Full Name'),
+          ),
         ),
         verticalGap(defaultPadding),
         TextField(
@@ -127,13 +140,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
                     UserModel? user =
                         await _api.getUserByPhone(_phoneCtrl.text);
-                    if (user == null) {
+                    if (user != null) {
                       SnackBarService.instance.showSnackBarError(
-                          'This phone number is not registered');
+                          'This phone number is already registered');
                       return;
                     }
                     startTimer();
                     otpCode = getOTPCode();
+                    log(otpCode);
                     _api.sendOtp(_phoneCtrl.text, otpCode);
                   },
             child: Text(
@@ -166,53 +180,74 @@ class _LoginScreenState extends State<LoginScreen> {
             _otpCtrl.text = pin;
           },
         ),
-        verticalGap(defaultPadding * 2),
+        verticalGap(defaultPadding),
+        TextField(
+          controller: _referalCtrl,
+          keyboardType: TextInputType.text,
+          decoration: const InputDecoration(
+            hintText: 'Referral Code',
+            label: Text('Referral Code'),
+          ),
+        ),
+        verticalGap(defaultPadding),
         ElevatedButton(
-            onPressed: _api.status == ApiStatus.loading
-                ? null
-                : () async {
-                    if (_phoneCtrl.text.length != 10 ||
-                        !isNumeric(_phoneCtrl.text)) {
-                      SnackBarService.instance.showSnackBarError(
-                          'Enter valid 10 digit mobile number');
-                      return;
-                    }
+          onPressed: _api.status == ApiStatus.loading
+              ? null
+              : () async {
+                  if (_phoneCtrl.text.length != 10 ||
+                      !isNumeric(_phoneCtrl.text)) {
+                    SnackBarService.instance.showSnackBarError(
+                        'Enter valid 10 digit mobile number');
+                    return;
+                  }
 
-                    if (isTestUser(_phoneCtrl.text, _otpCtrl.text)) {
-                    } else if (_otpCtrl.text != otpCode) {
-                      SnackBarService.instance.showSnackBarError('Invalid OTP');
-                      return;
-                    }
+                  // if (isTestUser(_phoneCtrl.text, _otpCtrl.text)) {
+                  // } else
+                  if (_otpCtrl.text != otpCode) {
+                    SnackBarService.instance.showSnackBarError('Invalid OTP');
+                    return;
+                  }
 
-                    UserModel? user =
-                        await _api.getUserByPhone(_phoneCtrl.text);
-                    // UserModel? user = await _api.getUserById(2);
-                    if (user == null) {
-                      SnackBarService.instance.showSnackBarError(
-                          'User not registered with this phone number');
-                      return;
-                    }
-
-                    if (user.status == UserStatus.SUSPENDED.name ||
-                        user.status == UserStatus.BLOCKED.name) {
-                      SnackBarService.instance
-                          .showSnackBarError('User status is ${user.status}');
-                      return;
-                    }
-                    await prefs.setInt(
-                        SharedpreferenceKey.userId, user.id ?? -1);
-                    Navigator.pushNamedAndRemoveUntil(
-                        context, HomeContainer.routePath, (route) => false);
-                  },
-            child: _api.status == ApiStatus.loading
-                ? const LoadingWidget()
-                : const Text('Login')),
+                  UserModel? user = await _api.getUserByPhone(_phoneCtrl.text);
+                  // UserModel? user = await _api.getUserById(2);
+                  if (user != null) {
+                    SnackBarService.instance.showSnackBarError(
+                        'User already registered with this phone number');
+                    return;
+                  }
+                  user = UserModel(
+                    fullName: _nameCtrl.text,
+                    mobileNo: _phoneCtrl.text,
+                    aadharBack: '',
+                    aadharFront: '',
+                    createdDate: DateTimeFormatter.now(),
+                    email: '',
+                    pan: '',
+                    status: UserStatus.CREATED.name,
+                    updatedDate: DateTimeFormatter.now(),
+                    userType: UserType.Customer.name,
+                    vpa: '',
+                    isKycVerified: false,
+                    image: '',
+                    referralCode: _referalCtrl.text,
+                  );
+                  await _api.createUser(user);
+                  user = await _api.getUserByPhone(_phoneCtrl.text);
+                  await prefs.setInt(
+                      SharedpreferenceKey.userId, user?.id ?? -1);
+                  // ignore: use_build_context_synchronously
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, HomeContainer.routePath, (route) => false);
+                },
+          child: _api.status == ApiStatus.loading
+              ? const LoadingWidget()
+              : const Text('Register'),
+        ),
         TextButton(
           onPressed: () {
-            Navigator.of(context)
-                .pushReplacementNamed(RegisterScreen.routePath);
+            Navigator.of(context).pushReplacementNamed(LoginScreen.routePath);
           },
-          child: const Text('New user? Register'),
+          child: const Text('Have an account? Login'),
         )
       ],
     );

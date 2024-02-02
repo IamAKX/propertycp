@@ -60,8 +60,10 @@ class _LeadListState extends State<LeadList> {
           Icons.add,
         ),
         onPressed: () {
-          PropertyShortModel propertyShortModel = PropertyShortModel(propertyId: 0, type: '');
-          Navigator.pushNamed(context, CreateLead.routePath, arguments: propertyShortModel)
+          PropertyShortModel propertyShortModel =
+              PropertyShortModel(propertyId: 0, type: '');
+          Navigator.pushNamed(context, CreateLead.routePath,
+                  arguments: propertyShortModel)
               .then((value) {
             loadScreen();
           });
@@ -168,27 +170,30 @@ class _LeadListState extends State<LeadList> {
                       color: Colors.green,
                     ),
                   ),
-                  (widget.status == LeadStatus.OPEN.name)
-                      ? IconButton(
-                          onPressed: () {
-                            showCloseDialog(
-                                context, leadListModel!.data!.elementAt(index));
-                          },
-                          icon: const Icon(
-                            Icons.close,
-                            color: Colors.red,
+                  Visibility(
+                    visible: userModel?.userType == UserType.Admin.name,
+                    child: (widget.status == LeadStatus.OPEN.name)
+                        ? IconButton(
+                            onPressed: () {
+                              showCloseDialog(context,
+                                  leadListModel!.data!.elementAt(index));
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: Colors.red,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              showReopenDialog(context,
+                                  leadListModel!.data!.elementAt(index));
+                            },
+                            icon: const Icon(
+                              Icons.replay,
+                              color: Colors.blue,
+                            ),
                           ),
-                        )
-                      : IconButton(
-                          onPressed: () {
-                            showReopenDialog(
-                                context, leadListModel!.data!.elementAt(index));
-                          },
-                          icon: const Icon(
-                            Icons.replay,
-                            color: Colors.blue,
-                          ),
-                        ),
+                  ),
                 ],
               ),
             ),

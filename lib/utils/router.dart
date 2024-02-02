@@ -24,6 +24,7 @@ import 'package:propertycp/widgets/video_gallery.dart';
 
 import '../models/property_media.dart';
 import '../screens/appIntro/app_intro_screen.dart';
+import '../screens/onboarding/register_screen.dart';
 
 class NavRoute {
   static MaterialPageRoute<dynamic> generatedRoute(RouteSettings settings) {
@@ -32,6 +33,8 @@ class NavRoute {
         return MaterialPageRoute(builder: (_) => const AppIntroScreen());
       case LoginScreen.routePath:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+      case RegisterScreen.routePath:
+        return MaterialPageRoute(builder: (_) => const RegisterScreen());
       case HomeContainer.routePath:
         return MaterialPageRoute(builder: (_) => const HomeContainer());
       case LeadCommentScreen.routePath:

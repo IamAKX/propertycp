@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:propertycp/models/list/user_list.dart';
 import 'package:propertycp/screens/profile/users/user_detail.dart';
 import 'package:propertycp/utils/colors.dart';
@@ -39,6 +40,8 @@ class _UserListScreenState extends State<UserListScreen> {
 
   loadScreen() async {
     userList = await _api.getAllUsers();
+    userList?.data
+        ?.retainWhere((element) => element.userType != UserType.User.name);
     _api.getUserById(SharedpreferenceKey.getUserId()).then((value) {
       setState(() {
         userModel = value;
@@ -52,7 +55,7 @@ class _UserListScreenState extends State<UserListScreen> {
     _api = Provider.of<ApiProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Users'),
+        title: Text('Users (${userList?.data?.length ?? 0})'),
         actions: [
           TextButton(
             onPressed: () {
@@ -109,25 +112,24 @@ class _UserListScreenState extends State<UserListScreen> {
             userList?.data?.elementAt(index).fullName ?? '',
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          trailing: const Icon(Icons.chevron_right),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (userList?.data?.elementAt(index).userType ==
+                  UserType.Admin.name)
+                const CircleAvatar(
+                  radius: 15,
+                  child: Icon(
+                    Icons.shield,
+                    size: 15,
+                    color: Colors.white,
+                  ),
+                ),
+              const Icon(Icons.chevron_right),
+            ],
+          ),
           subtitle: Row(
             children: [
-              // (userList?.data?.elementAt(index).isKycVerified ?? true)
-              //     ? Text(
-              //         'KYC not verified',
-              //         style: Theme.of(context)
-              //             .textTheme
-              //             .titleSmall
-              //             ?.copyWith(color: Colors.red),
-              //       )
-              //     : Text(
-              //         'KYC verified',
-              //         style: Theme.of(context)
-              //             .textTheme
-              //             .titleSmall
-              //             ?.copyWith(color: Colors.green),
-              //       ),
-
               Text(
                 userList?.data?.elementAt(index).status ?? '',
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
