@@ -209,7 +209,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () async {
-                  const String phoneNumber = '+917019499017';
+                  const String phoneNumber = '+917406959507';
                   const String url = 'https://wa.me/$phoneNumber';
 
                   if (!await launchUrl(Uri.parse(url))) {

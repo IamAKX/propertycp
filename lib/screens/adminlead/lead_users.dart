@@ -65,56 +65,53 @@ class _AllLeadUserScreenState extends State<AllLeadUserScreen> {
         child: Text('No lead found'),
       );
     }
-    return Expanded(
-      child: ListView.separated(
-        itemCount: userMap?.keys.length ?? 0,
-        separatorBuilder: (context, index) => Divider(color: dividerColor),
-        itemBuilder: (context, index) {
-          return ListTile(
-            leading: Stack(
-              children: [
-                ClipOval(
-                  child: UserProfileImage(
-                    userModel: userMap?.keys.elementAt(index),
-                    width: 50,
-                    height: 50,
-                  ),
+    return ListView.separated(
+      itemCount: userMap?.keys.length ?? 0,
+      separatorBuilder: (context, index) => Divider(color: dividerColor),
+      itemBuilder: (context, index) {
+        return ListTile(
+          leading: Stack(
+            children: [
+              ClipOval(
+                child: UserProfileImage(
+                  userModel: userMap?.keys.elementAt(index),
+                  width: 50,
+                  height: 50,
                 ),
-                Positioned(
-                  right: 0,
-                  bottom: 1,
-                  child: Icon(
-                    Icons.circle,
-                    size: 15,
-                    color:
-                        (userMap?.keys.elementAt(index).isKycVerified ?? false)
-                            ? Colors.green
-                            : Colors.red,
-                  ),
+              ),
+              Positioned(
+                right: 0,
+                bottom: 1,
+                child: Icon(
+                  Icons.circle,
+                  size: 15,
+                  color: (userMap?.keys.elementAt(index).isKycVerified ?? false)
+                      ? Colors.green
+                      : Colors.red,
                 ),
-              ],
-            ),
-            title: Text(
-              userMap?.keys.elementAt(index).fullName ?? '',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            trailing: const Icon(Icons.chevron_right),
-            subtitle: Row(
-              children: [
-                Text(
-                  'Leads created : ${userMap?.values.elementAt(index)}',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(),
-                ),
-                const Spacer(),
-              ],
-            ),
-            onTap: () => Navigator.of(context)
-                .pushNamed(AdminLeadList.routePath,
-                    arguments: userMap?.keys.elementAt(index).id)
-                .then((value) => loadScreen()),
-          );
-        },
-      ),
+              ),
+            ],
+          ),
+          title: Text(
+            userMap?.keys.elementAt(index).fullName ?? '',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          trailing: const Icon(Icons.chevron_right),
+          subtitle: Row(
+            children: [
+              Text(
+                'Leads created : ${userMap?.values.elementAt(index)}',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(),
+              ),
+              const Spacer(),
+            ],
+          ),
+          onTap: () => Navigator.of(context)
+              .pushNamed(AdminLeadList.routePath,
+                  arguments: userMap?.keys.elementAt(index).id)
+              .then((value) => loadScreen()),
+        );
+      },
     );
   }
 }

@@ -38,6 +38,7 @@ class _PropertyListingScreenState extends State<PropertyListingScreen> {
       String type = widget.params[1] == 'Commercial Properties'
           ? 'CommercialProperties'
           : widget.params[1]!;
+      // String type = widget.params[1]!;
       propertyListModel = await _api.getAllProperties(city, type);
 
       setState(() {});
